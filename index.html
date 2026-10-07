@@ -306,6 +306,16 @@
           <input id="sig-email" type="email" autocomplete="email" placeholder="firstname.lastname@setu.ie">
           <div id="email-validation" class="validation-message" aria-live="polite"></div>
         </div>
+
+        <div class="field">
+          <label for="sig-landline">Landline <span class="optional">(optional)</span></label>
+          <input id="sig-landline" type="tel" autocomplete="tel" placeholder="e.g. +353 51 000 000">
+        </div>
+
+        <div class="field">
+          <label for="sig-mobile">Mobile <span class="optional">(optional)</span></label>
+          <input id="sig-mobile" type="tel" autocomplete="tel" placeholder="e.g. +353 87 000 0000">
+        </div>
       </div>
     </section>
 
@@ -404,7 +414,9 @@
         irishName: document.getElementById('sig-name-ga'),
         qualifications: document.getElementById('sig-qualifications'),
         title: document.getElementById('sig-title'),
-        email: document.getElementById('sig-email')
+        email: document.getElementById('sig-email'),
+        landline: document.getElementById('sig-landline'),
+        mobile: document.getElementById('sig-mobile')
       };
 
       var preview = document.getElementById('sig-preview');
@@ -429,6 +441,10 @@
 
       function value(input) {
         return input.value.trim();
+      }
+
+      function phoneHref(phone) {
+        return phone.replace(/[^\d+]/g, '');
       }
 
       function logoUrl() {
@@ -465,8 +481,10 @@
         var qualifications = value(fields.qualifications);
         var title = value(fields.title);
         var email = value(fields.email);
+        var landline = value(fields.landline);
+        var mobile = value(fields.mobile);
 
-        if (!englishName && !irishName && !qualifications && !title && !email) {
+        if (!englishName && !irishName && !qualifications && !title && !email && !landline && !mobile) {
           return '';
         }
 
@@ -504,7 +522,7 @@
         }
 
         if (email || SETU_WEBSITE_LABEL) {
-          h += '<tr><td style="padding:0 0 13px 0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:16px; color:' + SETU_TEXT + ';">';
+          h += '<tr><td style="padding:0 0 ' + ((landline || mobile) ? '3' : '13') + 'px 0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:16px; color:' + SETU_TEXT + ';">';
 
           if (email) {
             h += '<span style="font-weight:700; color:' + SETU_GOLD + ';">E</span>';
@@ -514,6 +532,22 @@
           }
 
           h += '<a href="' + SETU_WEBSITE + '" style="color:' + SETU_TEXT + '; text-decoration:underline;">' + SETU_WEBSITE_LABEL + '</a>';
+          h += '</td></tr>';
+        }
+
+        if (landline || mobile) {
+          h += '<tr><td style="padding:0 0 13px 0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:16px; color:' + SETU_TEXT + ';">';
+          if (landline) {
+            h += '<span style="font-weight:700; color:' + SETU_GOLD + ';">T</span>&nbsp;&nbsp;';
+            h += '<a href="tel:' + escAttr(phoneHref(landline)) + '" style="color:' + SETU_TEXT + '; text-decoration:none;">' + esc(landline) + '</a>';
+          }
+          if (landline && mobile) {
+            h += '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;';
+          }
+          if (mobile) {
+            h += '<span style="font-weight:700; color:' + SETU_GOLD + ';">M</span>&nbsp;&nbsp;';
+            h += '<a href="tel:' + escAttr(phoneHref(mobile)) + '" style="color:' + SETU_TEXT + '; text-decoration:none;">' + esc(mobile) + '</a>';
+          }
           h += '</td></tr>';
         }
 
