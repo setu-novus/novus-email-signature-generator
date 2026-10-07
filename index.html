@@ -475,6 +475,20 @@
         return valid;
       }
 
+      // Email-safe inline typography. Outlook for Windows uses the Microsoft Word
+      // rendering engine, so every text element gets its own explicit font settings.
+      var EMAIL_FONT = 'Arial, Helvetica, sans-serif';
+
+      function emailTextStyle(sizePt, linePt, weight, color) {
+        return 'font-family:' + EMAIL_FONT + ' !important;' +
+          'mso-fareast-font-family:Arial;' +
+          'font-size:' + sizePt + 'pt;' +
+          'line-height:' + linePt + 'pt;' +
+          'mso-line-height-rule:exactly;' +
+          'font-weight:' + weight + ';' +
+          'color:' + color + ';';
+      }
+
       function buildSignatureHtml() {
         var englishName = value(fields.englishName);
         var irishName = value(fields.irishName);
@@ -498,71 +512,75 @@
         var logo = logoUrl();
         var h = '';
 
-        h += '<table cellpadding="0" cellspacing="0" border="0" role="presentation" ';
-        h += 'style="border-collapse:collapse; font-family:Arial,Helvetica,sans-serif; color:' + SETU_TEXT + '; max-width:620px;">';
+        // Keep the email signature entirely self-contained. Do not rely on the
+        // generator page's CSS because Outlook does not copy those styles.
+        h += '<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="620" ';
+        h += 'style="width:620px; max-width:620px; border-collapse:collapse; border-spacing:0; font-family:' + EMAIL_FONT + ' !important; mso-fareast-font-family:Arial; color:' + SETU_TEXT + ';">';
+        h += '<tbody>';
 
         if (displayName) {
-          h += '<tr><td style="padding:0 0 2px 0; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:' + SETU_TEXT + ';">';
-          h += esc(displayName);
+          h += '<tr><td style="padding:0 0 2px 0;' + emailTextStyle('10.5', '13.5', '700', SETU_TEXT) + '">';
+          h += '<span style="' + emailTextStyle('10.5', '13.5', '700', SETU_TEXT) + '">' + esc(displayName) + '</span>';
           h += '</td></tr>';
         }
 
         if (qualifications) {
-          h += '<tr><td style="padding:0 0 10px 0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:17px; color:' + SETU_TEXT + ';">';
-          h += esc(qualifications);
+          h += '<tr><td style="padding:0 0 10px 0;' + emailTextStyle('9.75', '12.75', '400', SETU_TEXT) + '">';
+          h += '<span style="' + emailTextStyle('9.75', '12.75', '400', SETU_TEXT) + '">' + esc(qualifications) + '</span>';
           h += '</td></tr>';
         } else if (displayName) {
           h += '<tr><td height="8" style="height:8px; font-size:8px; line-height:8px; mso-line-height-rule:exactly;">&nbsp;</td></tr>';
         }
 
         if (title) {
-          h += '<tr><td style="padding:0 0 3px 0; font-family:Arial,Helvetica,sans-serif; font-size:13px; line-height:17px; font-weight:700; color:' + SETU_TEXT + ';">';
-          h += 'SETU Novus - ' + esc(title);
+          h += '<tr><td style="padding:0 0 3px 0;' + emailTextStyle('9.75', '12.75', '700', SETU_TEXT) + '">';
+          h += '<span style="' + emailTextStyle('9.75', '12.75', '700', SETU_TEXT) + '">SETU Novus - ' + esc(title) + '</span>';
           h += '</td></tr>';
         }
 
         if (email || SETU_WEBSITE_LABEL) {
-          h += '<tr><td style="padding:0 0 ' + ((landline || mobile) ? '3' : '13') + 'px 0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:16px; color:' + SETU_TEXT + ';">';
+          h += '<tr><td style="padding:0 0 ' + ((landline || mobile) ? '3' : '13') + 'px 0;' + emailTextStyle('9', '12', '400', SETU_TEXT) + '">';
 
           if (email) {
-            h += '<span style="font-weight:700; color:' + SETU_GOLD + ';">E</span>';
+            h += '<span style="' + emailTextStyle('9', '12', '700', SETU_GOLD) + '">E</span>';
             h += '&nbsp;&nbsp;';
-            h += '<a href="mailto:' + escAttr(email) + '" style="color:' + SETU_TEXT + '; text-decoration:underline;">' + esc(email) + '</a>';
-            h += '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;';
+            h += '<a href="mailto:' + escAttr(email) + '" style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + 'text-decoration:underline;">' + esc(email) + '</a>';
+            h += '<span style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + '">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>';
           }
 
-          h += '<a href="' + SETU_WEBSITE + '" style="color:' + SETU_TEXT + '; text-decoration:underline;">' + SETU_WEBSITE_LABEL + '</a>';
+          h += '<a href="' + SETU_WEBSITE + '" style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + 'text-decoration:underline;">' + SETU_WEBSITE_LABEL + '</a>';
           h += '</td></tr>';
         }
 
         if (landline || mobile) {
-          h += '<tr><td style="padding:0 0 13px 0; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:16px; color:' + SETU_TEXT + ';">';
+          h += '<tr><td style="padding:0 0 13px 0;' + emailTextStyle('9', '12', '400', SETU_TEXT) + '">';
           if (landline) {
-            h += '<span style="font-weight:700; color:' + SETU_GOLD + ';">T</span>&nbsp;&nbsp;';
-            h += '<a href="tel:' + escAttr(phoneHref(landline)) + '" style="color:' + SETU_TEXT + '; text-decoration:none;">' + esc(landline) + '</a>';
+            h += '<span style="' + emailTextStyle('9', '12', '700', SETU_GOLD) + '">T</span>&nbsp;&nbsp;';
+            h += '<a href="tel:' + escAttr(phoneHref(landline)) + '" style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + 'text-decoration:none;">' + esc(landline) + '</a>';
           }
           if (landline && mobile) {
-            h += '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;';
+            h += '<span style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + '">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>';
           }
           if (mobile) {
-            h += '<span style="font-weight:700; color:' + SETU_GOLD + ';">M</span>&nbsp;&nbsp;';
-            h += '<a href="tel:' + escAttr(phoneHref(mobile)) + '" style="color:' + SETU_TEXT + '; text-decoration:none;">' + esc(mobile) + '</a>';
+            h += '<span style="' + emailTextStyle('9', '12', '700', SETU_GOLD) + '">M</span>&nbsp;&nbsp;';
+            h += '<a href="tel:' + escAttr(phoneHref(mobile)) + '" style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + 'text-decoration:none;">' + esc(mobile) + '</a>';
           }
           h += '</td></tr>';
         }
 
-        h += '<tr><td style="padding:0 0 12px 0;">';
+        h += '<tr><td style="padding:0 0 12px 0; font-family:' + EMAIL_FONT + ' !important; mso-fareast-font-family:Arial;">';
         h += '<img src="' + escAttr(logo) + '" alt="SETU Novus" width="245" ';
         h += 'style="display:block; width:245px; max-width:245px; height:auto; border:0; outline:none; text-decoration:none;">';
         h += '</td></tr>';
 
-        h += '<tr><td style="padding:0 0 12px 0; font-family:Arial,Helvetica,sans-serif; font-size:11px; line-height:15px; font-weight:600; color:' + SETU_TEXT + ';">';
-        h += esc(CAMPUS_EN) + '<br>' + esc(CAMPUS_GA);
+        h += '<tr><td style="padding:0 0 12px 0;' + emailTextStyle('8.25', '11.25', '600', SETU_TEXT) + '">';
+        h += '<span style="' + emailTextStyle('8.25', '11.25', '600', SETU_TEXT) + '">' + esc(CAMPUS_EN) + '</span><br>';
+        h += '<span style="' + emailTextStyle('8.25', '11.25', '600', SETU_TEXT) + '">' + esc(CAMPUS_GA) + '</span>';
         h += '</td></tr>';
 
         h += '<tr><td height="8" style="height:8px; border-bottom:2px solid ' + SETU_GOLD + '; font-size:8px; line-height:8px; mso-line-height-rule:exactly;">&nbsp;</td></tr>';
 
-        h += '</table>';
+        h += '</tbody></table>';
         return h;
       }
 
@@ -640,7 +658,9 @@
           if (navigator.clipboard && window.ClipboardItem) {
             await navigator.clipboard.write([
               new ClipboardItem({
-                'text/html': new Blob([html], { type: 'text/html' }),
+                'text/html': new Blob([
+                  '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="Generator" content="SETU Novus Email Signature Generator"></head><body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">' + html + '</body></html>'
+                ], { type: 'text/html' }),
                 'text/plain': new Blob([plainText], { type: 'text/plain' })
               })
             ]);
