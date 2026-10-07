@@ -299,22 +299,26 @@
         <div class="field field-full">
           <label for="sig-title">Job title</label>
           <input id="sig-title" type="text" autocomplete="organization-title" placeholder="e.g. Sports &amp; Societies Manager">
+          <div class="field-hint">Formatting is standardised automatically.</div>
         </div>
 
         <div class="field field-full">
           <label for="sig-email">SETU email address</label>
           <input id="sig-email" type="email" autocomplete="email" placeholder="firstname.lastname@setu.ie">
+          <div class="field-hint">Email addresses are converted to lowercase automatically.</div>
           <div id="email-validation" class="validation-message" aria-live="polite"></div>
         </div>
 
         <div class="field">
           <label for="sig-landline">Landline <span class="optional">(optional)</span></label>
-          <input id="sig-landline" type="tel" autocomplete="tel" placeholder="e.g. +353 51 000 000">
+          <input id="sig-landline" type="tel" autocomplete="tel" placeholder="e.g. 051 000 000">
+          <div class="field-hint">Irish numbers entered with a leading 0 are converted to +353 format.</div>
         </div>
 
         <div class="field">
           <label for="sig-mobile">Mobile <span class="optional">(optional)</span></label>
-          <input id="sig-mobile" type="tel" autocomplete="tel" placeholder="e.g. +353 87 000 0000">
+          <input id="sig-mobile" type="tel" autocomplete="tel" placeholder="e.g. 087 000 0000">
+          <div class="field-hint">Irish numbers entered with a leading 0 are converted to +353 format.</div>
         </div>
       </div>
     </section>
@@ -443,6 +447,134 @@
         return input.value.trim();
       }
 
+
+      function titleCaseWords(text, preserveAcronyms) {
+        var acronyms = {
+          'IT': true, 'ICT': true, 'HR': true, 'CEO': true, 'CFO': true,
+          'COO': true, 'CTO': true, 'CIO': true, 'QA': true, 'PR': true,
+          'AI': true, 'EU': true, 'UK': true, 'US': true, 'VP': true
+        };
+
+        return String(text || '').trim().split(/([\s\-’']+)/).map(function (part) {
+          if (!part || /^[\s\-’']+$/.test(part)) return part;
+          var upper = part.toLocaleUpperCase('en-IE');
+          if (preserveAcronyms && acronyms[upper]) return upper;
+          var lower = part.toLocaleLowerCase('en-IE');
+          return lower.charAt(0).toLocaleUpperCase('en-IE') + lower.slice(1);
+        }).join('');
+      }
+
+      function normalizeName(text) {
+        return titleCaseWords(text, false);
+      }
+
+      function normalizeJobTitle(text) {
+        return titleCaseWords(text, true);
+      }
+
+      function normalizeEmail(text) {
+        return String(text || '').trim().toLocaleLowerCase('en-IE');
+      }
+
+      function digitsOnly(text) {
+        return String(text || '').replace(/\D/g, '');
+      }
+
+      function formatIrishNumber(nationalDigits, kind) {
+        var n = digitsOnly(nationalDigits);
+        if (!n) return '';
+
+        if (kind === 'mobile' || /^8\d{8}$/.test(n)) {
+          if (n.length >= 9) return '+353 ' + n.slice(0, 2) + ' ' + n.slice(2, 5) + ' ' + n.slice(5, 9);
+        }
+
+        if (n.charAt(0) === '1' && n.length >= 8) {
+          return '+353 1 ' + n.slice(1, 4) + ' ' + n.slice(4, 8);
+        }
+
+        if (n.length === 8) {
+          return '+353 ' + n.slice(0, 2) + ' ' + n.slice(2, 5) + ' ' + n.slice(5, 8);
+        }
+
+        if (n.length === 9) {
+          return '+353 ' + n.slice(0, 3) + ' ' + n.slice(3, 6) + ' ' + n.slice(6, 9);
+        }
+
+        var groups = [];
+        while (n.length > 4) {
+          groups.unshift(n.slice(-3));
+          n = n.slice(0, -3);
+        }
+        if (n) groups.unshift(n);
+        return '+353 ' + groups.join(' ');
+      }
+
+      function formatInternationalNumber(raw) {
+        var cleaned = String(raw || '').trim();
+        if (!cleaned) return '';
+
+        cleaned = cleaned.replace(/^00/, '+');
+        var digits = digitsOnly(cleaned);
+        if (!digits) return '';
+
+        if (cleaned.charAt(0) !== '+') return cleaned;
+
+        // +353 is handled separately. For another explicit international prefix,
+        // preserve the country prefix and apply conservative grouping to the rest.
+        var countryLen = 2;
+        if (/^\+1\d/.test(cleaned)) countryLen = 1;
+        else if (/^\+(351|352|354|355|356|357|358|359)\d/.test(cleaned)) countryLen = 3;
+
+        var cc = digits.slice(0, countryLen);
+        var rest = digits.slice(countryLen);
+        if (!rest) return '+' + cc;
+
+        var groups = [];
+        while (rest.length > 4) {
+          groups.push(rest.slice(0, 3));
+          rest = rest.slice(3);
+        }
+        if (rest) groups.push(rest);
+        return '+' + cc + ' ' + groups.join(' ');
+      }
+
+      function normalizePhone(text, kind) {
+        var raw = String(text || '').trim();
+        if (!raw) return '';
+
+        var compact = raw.replace(/[()\-./]/g, ' ').replace(/\s+/g, ' ').trim();
+        if (/^00/.test(compact)) compact = '+' + compact.slice(2);
+
+        var digits = digitsOnly(compact);
+        if (!digits) return '';
+
+        if (compact.charAt(0) === '+') {
+          if (/^\+353/.test(compact)) {
+            return formatIrishNumber(digits.slice(3), kind);
+          }
+          return formatInternationalNumber(compact);
+        }
+
+        if (/^353/.test(digits)) {
+          return formatIrishNumber(digits.slice(3), kind);
+        }
+
+        if (digits.charAt(0) === '0') {
+          return formatIrishNumber(digits.slice(1), kind);
+        }
+
+        // If no prefix or Irish trunk zero was supplied, leave the number's
+        // country assumption untouched and just group the digits for readability.
+        var groups = [];
+        var rest = digits;
+        while (rest.length > 4) {
+          groups.push(rest.slice(0, 3));
+          rest = rest.slice(3);
+        }
+        if (rest) groups.push(rest);
+        return groups.join(' ');
+      }
+
       function phoneHref(phone) {
         return phone.replace(/[^\d+]/g, '');
       }
@@ -464,7 +596,7 @@
       }
 
       function validateEmail(showMessage) {
-        var email = value(fields.email);
+        var email = normalizeEmail(value(fields.email));
         var valid = isValidSetuEmail(email);
 
         fields.email.classList.toggle('invalid', !valid);
@@ -490,13 +622,13 @@
       }
 
       function buildSignatureHtml() {
-        var englishName = value(fields.englishName);
-        var irishName = value(fields.irishName);
+        var englishName = normalizeName(value(fields.englishName));
+        var irishName = normalizeName(value(fields.irishName));
         var qualifications = value(fields.qualifications);
-        var title = value(fields.title);
-        var email = value(fields.email);
-        var landline = value(fields.landline);
-        var mobile = value(fields.mobile);
+        var title = normalizeJobTitle(value(fields.title));
+        var email = normalizeEmail(value(fields.email));
+        var landline = normalizePhone(value(fields.landline), 'landline');
+        var mobile = normalizePhone(value(fields.mobile), 'mobile');
 
         if (!englishName && !irishName && !qualifications && !title && !email && !landline && !mobile) {
           return '';
@@ -598,11 +730,43 @@
       }
 
       Object.keys(fields).forEach(function (key) {
-        fields[key].addEventListener('input', render);
+        fields[key].addEventListener('input', function () {
+          if (key === 'email') {
+            fields.email.value = normalizeEmail(fields.email.value);
+          }
+          render();
+        });
+      });
+
+      fields.englishName.addEventListener('blur', function () {
+        fields.englishName.value = normalizeName(fields.englishName.value);
+        render();
+      });
+
+      fields.irishName.addEventListener('blur', function () {
+        fields.irishName.value = normalizeName(fields.irishName.value);
+        render();
+      });
+
+      fields.title.addEventListener('blur', function () {
+        fields.title.value = normalizeJobTitle(fields.title.value);
+        render();
+      });
+
+      fields.landline.addEventListener('blur', function () {
+        fields.landline.value = normalizePhone(fields.landline.value, 'landline');
+        render();
+      });
+
+      fields.mobile.addEventListener('blur', function () {
+        fields.mobile.value = normalizePhone(fields.mobile.value, 'mobile');
+        render();
       });
 
       fields.email.addEventListener('blur', function () {
+        fields.email.value = normalizeEmail(fields.email.value);
         validateEmail(true);
+        render();
       });
 
       function flashCopied() {
@@ -618,6 +782,14 @@
       }
 
       async function copySignature() {
+        fields.englishName.value = normalizeName(fields.englishName.value);
+        fields.irishName.value = normalizeName(fields.irishName.value);
+        fields.title.value = normalizeJobTitle(fields.title.value);
+        fields.email.value = normalizeEmail(fields.email.value);
+        fields.landline.value = normalizePhone(fields.landline.value, 'landline');
+        fields.mobile.value = normalizePhone(fields.mobile.value, 'mobile');
+
+        render();
         var html = buildSignatureHtml();
 
         if (!html) {
