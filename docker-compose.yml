@@ -1,8 +1,0 @@
-services:
-  signature-generator:
-    build: .
-    # Or use the pre-built image:
-    # image: ghcr.io/clarkemedia/email-signature-generator:latest
-    ports:
-      - "8080:80"
-    restart: unless-stopped
