@@ -1,900 +1,1493 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SETU Novus Email Signature Generator</title>
-  <meta name="description" content="Generate an approved SETU Novus staff email signature for Microsoft Outlook.">
-  <style>
-    * { box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SETU Novus Email Signature Generator</title>
+<meta name="description" content="Generate a SETU Novus staff email signature for Microsoft Outlook.">
 
-    :root {
-      --page-bg: #f3f5f7;
-      --panel-bg: #ffffff;
-      --ink: #1f2933;
-      --muted: #68737d;
-      --border: #d9dee3;
-      --setu-blue: #445363;
-      --setu-gold: #f0c300;
-      --success: #238636;
-      --danger: #b42318;
-    }
+<style>
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      padding: 32px 20px;
-      background: var(--page-bg);
-      color: var(--ink);
-      font-family: Arial, Helvetica, sans-serif;
-    }
+:root {
+  --page-bg: #f3f5f7;
+  --panel-bg: #ffffff;
+  --ink: #1f2933;
+  --muted: #68737d;
+  --border: #d9dee3;
+  --setu-blue: #445363;
+  --setu-gold: #f0c300;
+  --success: #238636;
+  --danger: #b42318;
+}
 
-    .wrapper {
-      max-width: 820px;
-      margin: 0 auto;
-    }
+body {
+  margin: 0;
+  padding: 32px 20px;
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-    .page-header {
-      margin-bottom: 22px;
-    }
+.wrapper {
+  max-width: 820px;
+  margin: 0 auto;
+}
 
-    .page-title {
-      margin: 0 0 6px;
-      color: var(--setu-blue);
-      font-size: 26px;
-      line-height: 1.2;
-    }
+.page-header { margin-bottom: 22px; }
 
-    .page-subtitle {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-    }
+.page-title {
+  margin: 0 0 6px;
+  color: var(--setu-blue);
+  font-size: 26px;
+  line-height: 1.2;
+}
 
-    .panel {
-      background: var(--panel-bg);
-      border: 1px solid #e6eaee;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(21, 31, 40, 0.06);
-      padding: 24px;
-      margin-bottom: 18px;
-    }
+.page-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
 
-    .section-label {
-      margin: 0 0 16px;
-      color: var(--setu-blue);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid #e6eaee;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(21,31,40,.06);
+  padding: 24px;
+  margin-bottom: 18px;
+}
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
+.section-label {
+  margin: 0 0 16px;
+  color: var(--setu-blue);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
 
-    .field-full { grid-column: 1 / -1; }
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
 
-    .field label {
-      display: block;
-      margin-bottom: 5px;
-      color: #44505a;
-      font-size: 13px;
-      font-weight: 700;
-    }
+.field-full { grid-column: 1 / -1; }
 
-    .optional {
-      color: #7b858e;
-      font-weight: 400;
-    }
+.field label {
+  display: block;
+  margin-bottom: 5px;
+  color: #44505a;
+  font-size: 13px;
+  font-weight: 700;
+}
 
-    .field input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: #fbfcfd;
-      color: var(--ink);
-      font: inherit;
-      font-size: 14px;
-      padding: 10px 12px;
-      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    }
+.optional {
+  color: #7b858e;
+  font-weight: 400;
+}
 
-    .field input:focus {
-      outline: none;
-      border-color: var(--setu-blue);
-      background: #fff;
-      box-shadow: 0 0 0 3px rgba(68, 83, 99, 0.12);
-    }
+.field input:not([type="checkbox"]) {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fbfcfd;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  padding: 10px 12px;
+}
 
-    .field input.invalid {
-      border-color: var(--danger);
-      box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.10);
-    }
+.field input:focus {
+  outline: none;
+  border-color: var(--setu-blue);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(68,83,99,.12);
+}
 
-    .field-hint,
-    .validation-message {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-    }
+.field input.invalid {
+  border-color: var(--danger);
+}
 
-    .validation-message {
-      color: var(--danger);
-      min-height: 17px;
-    }
+.field-hint, .validation-message {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
 
-    .preview-wrap {
-      overflow-x: auto;
-    }
+.validation-message {
+  color: var(--danger);
+  min-height: 17px;
+}
 
-    .preview-stage {
-      min-width: 620px;
-      background: #fff;
-      border: 1px solid #e4e7eb;
-      border-radius: 8px;
-      padding: 26px;
-    }
+/* Arena staff toggle */
 
-    .preview-placeholder {
-      margin: 0;
-      color: #89939c;
-      font-size: 14px;
-      text-align: center;
-      padding: 24px 10px;
-    }
+.arena-option {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fbfcfd;
+}
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
+.arena-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--setu-blue);
+}
 
-    .btn {
-      appearance: none;
-      border: 0;
-      border-radius: 6px;
-      cursor: pointer;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 11px 18px;
-      transition: background-color 0.15s, transform 0.05s, border-color 0.15s;
-    }
+.arena-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--setu-blue);
+  cursor: pointer;
+}
 
-    .btn:active { transform: translateY(1px); }
+.arena-hint {
+  margin: 7px 0 0 28px;
+  color: var(--muted);
+  font-size: 12px;
+}
 
-    .btn-primary {
-      background: var(--setu-blue);
-      color: #fff;
-    }
+.preview-wrap { overflow-x: auto; }
 
-    .btn-primary:hover { background: #34414e; }
+.preview-stage {
+  min-width: 620px;
+  background: #fff;
+  border: 1px solid #e4e7eb;
+  border-radius: 8px;
+  padding: 26px;
+}
 
-    .btn-primary.copied { background: var(--success); }
+.preview-placeholder {
+  margin: 0;
+  color: #89939c;
+  font-size: 14px;
+  text-align: center;
+  padding: 24px 10px;
+}
 
-    .btn-outline {
-      background: #fff;
-      color: #59636c;
-      border: 1px solid var(--border);
-    }
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
 
-    .btn-outline:hover { background: #f6f7f8; }
+.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 11px 18px;
+}
 
-    .copy-status {
-      margin-top: 9px;
-      color: var(--muted);
-      font-size: 12px;
-      min-height: 18px;
-    }
+.btn-primary {
+  background: var(--setu-blue);
+  color: #fff;
+}
 
-    .tabs {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #e5e8eb;
-      margin-bottom: 16px;
-    }
+.btn-primary:hover { background: #34414e; }
+.btn-primary.copied { background: var(--success); }
 
-    .tab {
-      border: 0;
-      border-bottom: 2px solid transparent;
-      background: transparent;
-      color: #69737c;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: -1px;
-      padding: 9px 13px;
-    }
+.btn-outline {
+  background: #fff;
+  color: #59636c;
+  border: 1px solid var(--border);
+}
 
-    .tab:hover { color: var(--setu-blue); }
+.btn-outline:hover { background: #f6f7f8; }
 
-    .tab.active {
-      color: var(--setu-blue);
-      border-bottom-color: var(--setu-gold);
-    }
+.copy-status {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 12px;
+  min-height: 18px;
+}
 
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+/* Outlook instructions */
 
-    .tab-content h3 {
-      margin: 0 0 8px;
-      color: var(--setu-blue);
-      font-size: 14px;
-    }
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #e5e8eb;
+  margin-bottom: 16px;
+}
 
-    .tab-content ol {
-      margin: 0;
-      padding-left: 22px;
-      color: #37414a;
-      font-size: 13px;
-      line-height: 1.7;
-    }
+.tab {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #69737c;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: -1px;
+  padding: 9px 13px;
+}
 
-    .callout {
-      margin-top: 12px;
-      border-left: 3px solid var(--setu-gold);
-      border-radius: 4px;
-      background: #fffbea;
-      color: #4b5157;
-      font-size: 12px;
-      line-height: 1.55;
-      padding: 10px 13px;
-    }
+.tab:hover { color: var(--setu-blue); }
 
-    .page-footer {
-      color: #7a848d;
-      font-size: 11px;
-      line-height: 1.5;
-      text-align: center;
-      padding: 8px 12px 22px;
-    }
+.tab.active {
+  color: var(--setu-blue);
+  border-bottom-color: var(--setu-gold);
+}
 
-    .page-footer a {
-      color: #5f6b75;
-    }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-    @media (max-width: 640px) {
-      body { padding: 20px 12px; }
-      .panel { padding: 18px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .field-full { grid-column: auto; }
-      .preview-stage { min-width: 590px; }
-    }
-  </style>
+.tab-content h3 {
+  margin: 18px 0 8px;
+  color: var(--setu-blue);
+  font-size: 14px;
+}
+
+.tab-content h3:first-child { margin-top: 0; }
+
+.tab-content ol {
+  margin: 0;
+  padding-left: 22px;
+  color: #37414a;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.instruction-block {
+  padding-bottom: 17px;
+  margin-bottom: 17px;
+  border-bottom: 1px solid #e6eaee;
+}
+
+.instruction-block:last-of-type {
+  border-bottom: 0;
+  margin-bottom: 0;
+}
+
+.callout {
+  margin-top: 12px;
+  border-left: 3px solid var(--setu-gold);
+  border-radius: 4px;
+  background: #fffbea;
+  color: #4b5157;
+  font-size: 12px;
+  line-height: 1.55;
+  padding: 10px 13px;
+}
+
+.page-footer {
+  color: #7a848d;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+  padding: 8px 12px 22px;
+}
+
+@media (max-width: 640px) {
+  body { padding: 20px 12px; }
+  .panel { padding: 18px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .field-full { grid-column: auto; }
+  .preview-stage { min-width: 590px; }
+}
+</style>
 </head>
+
 <body>
-  <div class="wrapper">
-    <header class="page-header">
-      <h1 class="page-title">SETU Novus Email Signature Generator</h1>
-      <p class="page-subtitle">Enter your details below to create your approved SETU Novus email signature.</p>
-    </header>
 
-    <section class="panel" aria-labelledby="details-heading">
-      <p class="section-label" id="details-heading">Your details</p>
+<div class="wrapper">
 
-      <div class="form-grid">
-        <div class="field field-full">
-          <label for="sig-name-en">English name</label>
-          <input id="sig-name-en" type="text" autocomplete="name" placeholder="e.g. Alex Murphy">
-        </div>
+<header class="page-header">
+  <h1 class="page-title">
+    SETU Novus Email Signature Generator
+  </h1>
+  <p class="page-subtitle">
+    Enter your details below to create your approved
+    SETU Novus email signature.
+  </p>
+</header>
 
-        <div class="field field-full">
-          <label for="sig-name-ga">Irish name <span class="optional">(optional)</span></label>
-          <input id="sig-name-ga" type="text" autocomplete="off" placeholder="e.g. Aoife Ní Bhraonáin">
-          <div class="field-hint">If entered, it will appear after the English name separated by a slash.</div>
-        </div>
+<section class="panel" aria-labelledby="details-heading">
 
-        <div class="field field-full">
-          <label for="sig-qualifications">Qualifications <span class="optional">(optional)</span></label>
-          <input id="sig-qualifications" type="text" autocomplete="off" placeholder="e.g. MSc, BA">
-          <div class="field-hint">Leave blank if not applicable. No empty line will be added to the signature.</div>
-        </div>
+<p class="section-label" id="details-heading">
+  Your details
+</p>
 
-        <div class="field field-full">
-          <label for="sig-title">Job title</label>
-          <input id="sig-title" type="text" autocomplete="organization-title" placeholder="e.g. Sports &amp; Societies Manager">
-          <div class="field-hint">Formatting is standardised automatically.</div>
-        </div>
+<div class="form-grid">
 
-        <div class="field field-full">
-          <label for="sig-email">SETU email address</label>
-          <input id="sig-email" type="email" autocomplete="email" placeholder="firstname.lastname@setu.ie">
-          <div class="field-hint">Email addresses are converted to lowercase automatically.</div>
-          <div id="email-validation" class="validation-message" aria-live="polite"></div>
-        </div>
-
-        <div class="field">
-          <label for="sig-landline">Landline <span class="optional">(optional)</span></label>
-          <input id="sig-landline" type="tel" autocomplete="tel" placeholder="e.g. 051 000 000">
-          <div class="field-hint">Irish numbers entered with a leading 0 are converted to +353 format.</div>
-        </div>
-
-        <div class="field">
-          <label for="sig-mobile">Mobile <span class="optional">(optional)</span></label>
-          <input id="sig-mobile" type="tel" autocomplete="tel" placeholder="e.g. 087 000 0000">
-          <div class="field-hint">Irish numbers entered with a leading 0 are converted to +353 format.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" aria-labelledby="preview-heading">
-      <p class="section-label" id="preview-heading">Preview</p>
-
-      <div class="preview-wrap">
-        <div class="preview-stage">
-          <div id="sig-preview"></div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn btn-primary" id="copy-rich" type="button">Copy signature</button>
-        <button class="btn btn-outline" id="reset-btn" type="button">Clear details</button>
-      </div>
-
-      <div id="copy-status" class="copy-status" aria-live="polite"></div>
-    </section>
-
-    <section class="panel" aria-labelledby="instructions-heading">
-      <p class="section-label" id="instructions-heading">Outlook setup instructions</p>
-
-      <div class="tabs" role="tablist" aria-label="Outlook versions">
-        <button class="tab active" type="button" data-tab="outlook-new">New Outlook / Web</button>
-        <button class="tab" type="button" data-tab="outlook-classic">Classic Outlook</button>
-        <button class="tab" type="button" data-tab="outlook-mac">Outlook for Mac</button>
-      </div>
-
-      <div class="tab-content active" data-tab="outlook-new">
-        <h3>New Outlook or Outlook on the web</h3>
-        <ol>
-          <li>Complete your details and click <strong>Copy signature</strong>.</li>
-          <li>Open Outlook and select the <strong>Settings</strong> gear.</li>
-          <li>Go to <strong>Accounts &gt; Signatures</strong>.</li>
-          <li>Create a new signature and give it a name.</li>
-          <li>Click in the signature editor and paste using <strong>Ctrl + V</strong>.</li>
-          <li>Set it as the default for new messages and replies if required, then save.</li>
-        </ol>
-        <div class="callout">If desktop Outlook changes the formatting, try pasting the signature into Outlook on the web. It is often more reliable for HTML signatures.</div>
-      </div>
-
-      <div class="tab-content" data-tab="outlook-classic">
-        <h3>Classic Outlook for Windows</h3>
-        <ol>
-          <li>Complete your details and click <strong>Copy signature</strong>.</li>
-          <li>In Outlook go to <strong>File &gt; Options &gt; Mail &gt; Signatures</strong>.</li>
-          <li>Create a new signature and give it a name.</li>
-          <li>Click inside the editor and paste using <strong>Ctrl + V</strong>.</li>
-          <li>Choose the signature as the default for new messages and replies if required.</li>
-          <li>Save your changes.</li>
-        </ol>
-      </div>
-
-      <div class="tab-content" data-tab="outlook-mac">
-        <h3>Outlook for Mac</h3>
-        <ol>
-          <li>Complete your details and click <strong>Copy signature</strong>.</li>
-          <li>In Outlook go to <strong>Outlook &gt; Settings &gt; Signatures</strong>.</li>
-          <li>Create a new signature.</li>
-          <li>Click inside the editor and paste using <strong>Cmd + V</strong>.</li>
-          <li>Set it as the default signature if required.</li>
-        </ol>
-      </div>
-    </section>
+  <div class="field field-full">
+    <label for="sig-name-en">English name</label>
+    <input
+      id="sig-name-en"
+      type="text"
+      autocomplete="name"
+      placeholder="e.g. Alex Murphy"
+    >
   </div>
 
-  <footer class="page-footer">
-    SETU Novus Email Signature Generator.<br>
-    Based on the open-source Clarke Media Email Signature Generator, distributed under the MIT License.
-  </footer>
+  <div class="field field-full">
+    <label for="sig-name-ga">
+      Irish name
+      <span class="optional">(optional)</span>
+    </label>
+    <input
+      id="sig-name-ga"
+      type="text"
+      placeholder="e.g. Aoife Ní Bhraonáin"
+    >
+    <div class="field-hint">
+      If entered, it will appear after the English name
+      separated by a slash.
+    </div>
+  </div>
 
-  <!--
-    This page is a modified version of the Clarke Media Email Signature Generator:
-    https://github.com/clarkemedia/email-signature-generator
-    The original project is licensed under the MIT License.
-    Keep the repository's LICENSE file and original copyright/license notice.
-  -->
+  <div class="field field-full">
+    <label for="sig-qualifications">
+      Qualifications
+      <span class="optional">(optional)</span>
+    </label>
+    <input
+      id="sig-qualifications"
+      type="text"
+      placeholder="e.g. MSc, BA"
+    >
+    <div class="field-hint">
+      Leave blank if not applicable.
+    </div>
+  </div>
 
-  <script>
-    (function () {
-      'use strict';
+  <!-- Arena staff checkbox -->
 
-      var GITHUB_PAGES_BASE = 'https://setu-novus.github.io/novus-email-signature-generator/';
-      var LOGO_FILENAME = 'setu-novus-logo.png';
-      var SETU_WEBSITE = 'https://www.setu.ie';
-      var SETU_WEBSITE_LABEL = 'setu.ie';
-      var SETU_GOLD = '#F0C300';
-      var SETU_TEXT = '#445363';
+  <div class="field field-full">
+    <div class="arena-option">
+      <label class="arena-label" for="sig-arena">
+        <input
+          id="sig-arena"
+          type="checkbox"
+        >
+        Arena Staff
+      </label>
+      <p class="arena-hint">
+        Tick this box if you are an Arena staff member.
+        Your job title will automatically include "Arena".
+      </p>
+    </div>
+  </div>
 
-      var CAMPUS_EN = 'Cork Road Campus, Cork Road, Waterford, X91 K0EK, Ireland';
-      var CAMPUS_GA = 'Campas Bhóthar Chorcaí, Bóthar Chorcaí, Port Láirge, X91 K0EK, Éire';
+  <div class="field field-full">
+    <label for="sig-title">Job title</label>
+    <input
+      id="sig-title"
+      type="text"
+      autocomplete="organization-title"
+      placeholder="e.g. IT Support Manager"
+    >
+    <div class="field-hint">
+      Enter your job title only. The SETU Novus prefix,
+      and Arena if selected, will be added automatically.
+    </div>
+  </div>
 
-      var fields = {
-        englishName: document.getElementById('sig-name-en'),
-        irishName: document.getElementById('sig-name-ga'),
-        qualifications: document.getElementById('sig-qualifications'),
-        title: document.getElementById('sig-title'),
-        email: document.getElementById('sig-email'),
-        landline: document.getElementById('sig-landline'),
-        mobile: document.getElementById('sig-mobile')
-      };
+  <div class="field field-full">
+    <label for="sig-email">
+      SETU email address
+    </label>
+    <input
+      id="sig-email"
+      type="email"
+      autocomplete="email"
+      placeholder="firstname.lastname@setu.ie"
+    >
+    <div class="field-hint">
+      Email addresses are converted to lowercase automatically.
+    </div>
+    <div
+      id="email-validation"
+      class="validation-message"
+      aria-live="polite"
+    ></div>
+  </div>
 
-      var preview = document.getElementById('sig-preview');
-      var emailValidation = document.getElementById('email-validation');
-      var copyStatus = document.getElementById('copy-status');
-      var copyButton = document.getElementById('copy-rich');
+  <div class="field">
+    <label for="sig-landline">
+      Landline
+      <span class="optional">(optional)</span>
+    </label>
+    <input
+      id="sig-landline"
+      type="tel"
+      placeholder="e.g. 051 000 000"
+    >
+    <div class="field-hint">
+      Irish numbers are converted to +353 format.
+    </div>
+  </div>
 
-      function esc(value) {
-        var div = document.createElement('div');
-        div.textContent = value == null ? '' : String(value);
-        return div.innerHTML;
+  <div class="field">
+    <label for="sig-mobile">
+      Mobile
+      <span class="optional">(optional)</span>
+    </label>
+    <input
+      id="sig-mobile"
+      type="tel"
+      placeholder="e.g. 087 000 0000"
+    >
+    <div class="field-hint">
+      Irish numbers are converted to +353 format.
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- Signature preview -->
+
+<section class="panel" aria-labelledby="preview-heading">
+
+<p class="section-label" id="preview-heading">
+  Preview
+</p>
+
+<div class="preview-wrap">
+  <div class="preview-stage">
+    <div id="sig-preview"></div>
+  </div>
+</div>
+
+<div class="actions">
+  <button
+    class="btn btn-primary"
+    id="copy-rich"
+    type="button"
+  >
+    Copy signature
+  </button>
+
+  <button
+    class="btn btn-outline"
+    id="reset-btn"
+    type="button"
+  >
+    Clear details
+  </button>
+</div>
+
+<div
+  id="copy-status"
+  class="copy-status"
+  aria-live="polite"
+></div>
+
+</section>
+
+<!-- Outlook instructions -->
+
+<section class="panel" aria-labelledby="instructions-heading">
+
+<p class="section-label" id="instructions-heading">
+  Outlook setup instructions
+</p>
+
+<p class="page-subtitle" style="margin-bottom:16px;">
+  Follow the instructions for your version of Outlook.
+  You can create a new signature or replace your existing one.
+</p>
+
+<div class="tabs" role="tablist" aria-label="Outlook versions">
+  <button
+    class="tab active"
+    type="button"
+    data-tab="outlook-new"
+  >
+    New Outlook / Web
+  </button>
+
+  <button
+    class="tab"
+    type="button"
+    data-tab="outlook-classic"
+  >
+    Classic Outlook
+  </button>
+
+  <button
+    class="tab"
+    type="button"
+    data-tab="outlook-mac"
+  >
+    Outlook for Mac
+  </button>
+</div>
+
+<!-- New Outlook -->
+
+<div class="tab-content active" data-tab="outlook-new">
+
+  <div class="instruction-block">
+    <h3>Adding a new signature</h3>
+    <ol>
+      <li>Complete your details above and click
+        <strong>Copy signature</strong>.</li>
+      <li>Open New Outlook or Outlook on the web.</li>
+      <li>Click the <strong>Settings</strong> gear icon.</li>
+      <li>Navigate to
+        <strong>Accounts &gt; Signatures</strong>.</li>
+      <li>Click <strong>Add signature</strong> or
+        <strong>New signature</strong>.</li>
+      <li>Give the signature a name, for example
+        <strong>SETU Novus</strong>.</li>
+      <li>Click inside the signature editor and press
+        <strong>Ctrl + V</strong> to paste.</li>
+      <li>Choose the signature for new messages and
+        replies/forwards if required.</li>
+      <li>Click <strong>Save</strong>.</li>
+    </ol>
+  </div>
+
+  <div class="instruction-block">
+    <h3>Replacing an existing signature</h3>
+    <ol>
+      <li>Complete your details above and click
+        <strong>Copy signature</strong>.</li>
+      <li>Open Outlook and click the
+        <strong>Settings</strong> gear icon.</li>
+      <li>Go to
+        <strong>Accounts &gt; Signatures</strong>.</li>
+      <li>Select your existing signature from the list.</li>
+      <li>Click inside its editing area and press
+        <strong>Ctrl + A</strong> to select the old content.</li>
+      <li>Press <strong>Ctrl + V</strong> to replace it
+        with your new SETU Novus signature.</li>
+      <li>Check that the logo, text and links
+        appear correctly.</li>
+      <li>Confirm your default signature settings
+        and click <strong>Save</strong>.</li>
+    </ol>
+  </div>
+
+  <div class="callout">
+    <strong>Tip:</strong> If the signature formatting
+    changes when pasted into desktop Outlook, try using
+    Outlook on the web. HTML signatures often paste
+    more reliably there.
+  </div>
+
+</div>
+
+<!-- Classic Outlook -->
+
+<div class="tab-content" data-tab="outlook-classic">
+
+  <div class="instruction-block">
+    <h3>Adding a new signature</h3>
+    <ol>
+      <li>Complete your details and click
+        <strong>Copy signature</strong>.</li>
+      <li>Open Classic Outlook for Windows.</li>
+      <li>Go to
+        <strong>File &gt; Options &gt; Mail &gt; Signatures</strong>.</li>
+      <li>Click <strong>New</strong>.</li>
+      <li>Enter a name such as
+        <strong>SETU Novus</strong>.</li>
+      <li>Click inside the signature editing area.</li>
+      <li>Press <strong>Ctrl + V</strong> to paste.</li>
+      <li>Under <strong>Choose default signature</strong>,
+        select the correct email account.</li>
+      <li>Set the signature for new messages and
+        replies/forwards as required.</li>
+      <li>Click <strong>OK</strong> to save.</li>
+    </ol>
+  </div>
+
+  <div class="instruction-block">
+    <h3>Replacing an existing signature</h3>
+    <ol>
+      <li>Complete your details and click
+        <strong>Copy signature</strong>.</li>
+      <li>Open Classic Outlook.</li>
+      <li>Go to
+        <strong>File &gt; Options &gt; Mail &gt; Signatures</strong>.</li>
+      <li>Under <strong>Select signature to edit</strong>,
+        click your current signature.</li>
+      <li>Click inside the signature editing area.</li>
+      <li>Press <strong>Ctrl + A</strong> to select
+        the old signature.</li>
+      <li>Press <strong>Ctrl + V</strong> to replace it
+        with the new signature.</li>
+      <li>Check the logo and formatting.</li>
+      <li>Ensure the correct default signature
+        is selected.</li>
+      <li>Click <strong>OK</strong> to save changes.</li>
+    </ol>
+  </div>
+
+  <div class="callout">
+    <strong>Important:</strong> When replacing a
+    signature, select the existing signature first.
+    Do not create another signature unless you
+    want to keep both versions.
+  </div>
+
+</div>
+
+<!-- Outlook for Mac -->
+
+<div class="tab-content" data-tab="outlook-mac">
+
+  <div class="instruction-block">
+    <h3>Adding a new signature</h3>
+    <ol>
+      <li>Complete your details and click
+        <strong>Copy signature</strong>.</li>
+      <li>Open Outlook for Mac.</li>
+      <li>Go to
+        <strong>Outlook &gt; Settings &gt; Signatures</strong>.</li>
+      <li>Click the <strong>+</strong> or
+        <strong>Add</strong> button.</li>
+      <li>Name your signature
+        <strong>SETU Novus</strong>.</li>
+      <li>Click inside the signature editor and press
+        <strong>Cmd + V</strong>.</li>
+      <li>Save your signature.</li>
+      <li>Set it as your default signature if required.</li>
+    </ol>
+  </div>
+
+  <div class="instruction-block">
+    <h3>Replacing an existing signature</h3>
+    <ol>
+      <li>Complete your details and click
+        <strong>Copy signature</strong>.</li>
+      <li>Open Outlook for Mac.</li>
+      <li>Go to
+        <strong>Outlook &gt; Settings &gt; Signatures</strong>.</li>
+      <li>Select the signature you currently use.</li>
+      <li>Open it for editing if required.</li>
+      <li>Click inside the editing area and press
+        <strong>Cmd + A</strong>.</li>
+      <li>Press <strong>Cmd + V</strong> to paste
+        your replacement signature.</li>
+      <li>Check the logo and formatting.</li>
+      <li>Save the changes and confirm your
+        default signature settings.</li>
+    </ol>
+  </div>
+
+  <div class="callout">
+    <strong>Tip:</strong> The appearance of the
+    signature settings may vary depending on your
+    version of Outlook for Mac.
+  </div>
+
+</div>
+
+</section>
+
+</div>
+
+<footer class="page-footer">
+  SETU Novus Email Signature Generator.<br>
+  Based on the open-source Clarke Media Email Signature
+  Generator, distributed under the MIT License.
+</footer>
+
+<!--
+This page is a modified version of:
+https://github.com/clarkemedia/email-signature-generator
+
+Original project licensed under the MIT License.
+Keep the repository LICENSE and original copyright notice.
+-->
+
+<script>
+(function () {
+  'use strict';
+
+  const GITHUB_PAGES_BASE =
+    'https://setu-novus.github.io/novus-email-signature-generator/';
+
+  const LOGO_FILENAME = 'setu-novus-logo.png';
+  const SETU_WEBSITE = 'https://www.setu.ie';
+  const SETU_WEBSITE_LABEL = 'setu.ie';
+  const SETU_GOLD = '#F0C300';
+  const SETU_TEXT = '#445363';
+
+  const CAMPUS_EN =
+    'Cork Road Campus, Cork Road, Waterford, X91 K0EK, Ireland';
+
+  const CAMPUS_GA =
+    'Campas Bhóthar Chorcaí, Bóthar Chorcaí, Port Láirge, X91 K0EK, Éire';
+
+  const fields = {
+    englishName: document.getElementById('sig-name-en'),
+    irishName: document.getElementById('sig-name-ga'),
+    qualifications: document.getElementById('sig-qualifications'),
+    title: document.getElementById('sig-title'),
+    email: document.getElementById('sig-email'),
+    landline: document.getElementById('sig-landline'),
+    mobile: document.getElementById('sig-mobile')
+  };
+
+  const arenaCheckbox = document.getElementById('sig-arena');
+  const preview = document.getElementById('sig-preview');
+  const emailValidation =
+    document.getElementById('email-validation');
+  const copyStatus = document.getElementById('copy-status');
+  const copyButton = document.getElementById('copy-rich');
+
+  function esc(value) {
+    const div = document.createElement('div');
+    div.textContent = value == null ? '' : String(value);
+    return div.innerHTML;
+  }
+
+  function escAttr(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function value(input) {
+    return input.value.trim();
+  }
+
+  function titleCaseWords(text, preserveAcronyms) {
+    const acronyms = {
+      'IT': true,
+      'ICT': true,
+      'HR': true,
+      'CEO': true,
+      'CFO': true,
+      'COO': true,
+      'CTO': true,
+      'CIO': true,
+      'QA': true,
+      'PR': true,
+      'AI': true,
+      'EU': true,
+      'UK': true,
+      'US': true,
+      'VP': true
+    };
+
+    return String(text || '')
+      .trim()
+      .split(/([\s\-’']+)/)
+      .map(function(part) {
+        if (!part || /^[\s\-’']+$/.test(part)) {
+          return part;
+        }
+
+        const upper = part.toLocaleUpperCase('en-IE');
+
+        if (preserveAcronyms && acronyms[upper]) {
+          return upper;
+        }
+
+        const lower = part.toLocaleLowerCase('en-IE');
+
+        return lower.charAt(0).toLocaleUpperCase('en-IE')
+          + lower.slice(1);
+      })
+      .join('');
+  }
+
+  function normalizeName(text) {
+    return titleCaseWords(text, false);
+  }
+
+  function normalizeJobTitle(text) {
+    return titleCaseWords(text, true);
+  }
+
+  function normalizeEmail(text) {
+    return String(text || '')
+      .trim()
+      .toLocaleLowerCase('en-IE');
+  }
+
+  // Generates the full title including the Arena prefix.
+  function getFullJobTitle() {
+    let title = normalizeJobTitle(value(fields.title));
+
+    if (!title) return '';
+
+    // Avoid a duplicate prefix if someone includes it.
+    title = title.replace(/^SETU Novus\s*-\s*/i, '');
+
+    if (arenaCheckbox.checked) {
+      title = title.replace(/^Arena\s+/i, '');
+      return 'SETU Novus - Arena ' + title;
+    }
+
+    return 'SETU Novus - ' + title;
+  }
+
+  function digitsOnly(text) {
+    return String(text || '').replace(/\D/g, '');
+  }
+
+  function formatIrishNumber(nationalDigits, kind) {
+    let n = digitsOnly(nationalDigits);
+
+    if (!n) return '';
+
+    if (kind === 'mobile' || /^8\d{8}$/.test(n)) {
+      if (n.length >= 9) {
+        return '+353 ' + n.slice(0, 2) + ' '
+          + n.slice(2, 5) + ' ' + n.slice(5, 9);
+      }
+    }
+
+    if (n.charAt(0) === '1' && n.length >= 8) {
+      return '+353 1 ' + n.slice(1, 4)
+        + ' ' + n.slice(4, 8);
+    }
+
+    if (n.length === 8) {
+      return '+353 ' + n.slice(0, 2) + ' '
+        + n.slice(2, 5) + ' ' + n.slice(5, 8);
+    }
+
+    if (n.length === 9) {
+      return '+353 ' + n.slice(0, 3) + ' '
+        + n.slice(3, 6) + ' ' + n.slice(6, 9);
+    }
+
+    const groups = [];
+
+    while (n.length > 4) {
+      groups.unshift(n.slice(-3));
+      n = n.slice(0, -3);
+    }
+
+    if (n) groups.unshift(n);
+
+    return '+353 ' + groups.join(' ');
+  }
+
+  function formatInternationalNumber(raw) {
+    let cleaned = String(raw || '').trim();
+
+    if (!cleaned) return '';
+
+    cleaned = cleaned.replace(/^00/, '+');
+
+    const digits = digitsOnly(cleaned);
+
+    if (!digits) return '';
+    if (cleaned.charAt(0) !== '+') return cleaned;
+
+    let countryLen = 2;
+
+    if (/^\+1\d/.test(cleaned)) {
+      countryLen = 1;
+    } else if (
+      /^\+(351|352|354|355|356|357|358|359)\d/.test(cleaned)
+    ) {
+      countryLen = 3;
+    }
+
+    const cc = digits.slice(0, countryLen);
+    let rest = digits.slice(countryLen);
+
+    if (!rest) return '+' + cc;
+
+    const groups = [];
+
+    while (rest.length > 4) {
+      groups.push(rest.slice(0, 3));
+      rest = rest.slice(3);
+    }
+
+    if (rest) groups.push(rest);
+
+    return '+' + cc + ' ' + groups.join(' ');
+  }
+
+  function normalizePhone(text, kind) {
+    let raw = String(text || '').trim();
+
+    if (!raw) return '';
+
+    let compact = raw
+      .replace(/[()\-./]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (/^00/.test(compact)) {
+      compact = '+' + compact.slice(2);
+    }
+
+    const digits = digitsOnly(compact);
+
+    if (!digits) return '';
+
+    if (compact.charAt(0) === '+') {
+      if (/^\+353/.test(compact)) {
+        return formatIrishNumber(digits.slice(3), kind);
       }
 
-      function escAttr(value) {
-        return String(value == null ? '' : value)
-          .replace(/&/g, '&amp;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
+      return formatInternationalNumber(compact);
+    }
+
+    if (/^353/.test(digits)) {
+      return formatIrishNumber(digits.slice(3), kind);
+    }
+
+    if (digits.charAt(0) === '0') {
+      return formatIrishNumber(digits.slice(1), kind);
+    }
+
+    const groups = [];
+    let rest = digits;
+
+    while (rest.length > 4) {
+      groups.push(rest.slice(0, 3));
+      rest = rest.slice(3);
+    }
+
+    if (rest) groups.push(rest);
+
+    return groups.join(' ');
+  }
+
+  function phoneHref(phone) {
+    return phone.replace(/[^\d+]/g, '');
+  }
+
+  function logoUrl() {
+    if (
+      window.location.protocol === 'http:' ||
+      window.location.protocol === 'https:'
+    ) {
+      try {
+        return new URL(
+          LOGO_FILENAME,
+          window.location.href
+        ).href;
+      } catch (e) {
+        return GITHUB_PAGES_BASE + LOGO_FILENAME;
+      }
+    }
+
+    return GITHUB_PAGES_BASE + LOGO_FILENAME;
+  }
+
+  function isValidSetuEmail(email) {
+    if (!email) return true;
+
+    return /^[^\s@]+@setu\.ie$/i.test(email);
+  }
+
+  function validateEmail(showMessage) {
+    const email = normalizeEmail(value(fields.email));
+    const valid = isValidSetuEmail(email);
+
+    fields.email.classList.toggle('invalid', !valid);
+
+    emailValidation.textContent = (!valid && showMessage)
+      ? 'Please enter your @setu.ie email address.'
+      : '';
+
+    return valid;
+  }
+
+  // Email-safe formatting for Outlook.
+  const EMAIL_FONT = 'Arial, Helvetica, sans-serif';
+
+  function emailTextStyle(sizePt, linePt, weight, color) {
+    return 'font-family:' + EMAIL_FONT + ' !important;' +
+      'mso-fareast-font-family:Arial;' +
+      'font-size:' + sizePt + 'pt;' +
+      'line-height:' + linePt + 'pt;' +
+      'mso-line-height-rule:exactly;' +
+      'font-weight:' + weight + ';' +
+      'color:' + color + ';';
+  }
+
+  function buildSignatureHtml() {
+    const englishName =
+      normalizeName(value(fields.englishName));
+
+    const irishName =
+      normalizeName(value(fields.irishName));
+
+    const qualifications = value(fields.qualifications);
+    const title = getFullJobTitle();
+    const email = normalizeEmail(value(fields.email));
+
+    const landline =
+      normalizePhone(value(fields.landline), 'landline');
+
+    const mobile =
+      normalizePhone(value(fields.mobile), 'mobile');
+
+    if (
+      !englishName &&
+      !irishName &&
+      !qualifications &&
+      !title &&
+      !email &&
+      !landline &&
+      !mobile
+    ) {
+      return '';
+    }
+
+    let displayName = englishName;
+
+    if (englishName && irishName) {
+      displayName = englishName + ' / ' + irishName;
+    } else if (!englishName && irishName) {
+      displayName = irishName;
+    }
+
+    const logo = logoUrl();
+
+    let h = '';
+
+    h += '<table cellpadding="0" cellspacing="0" border="0" ';
+    h += 'role="presentation" width="620" ';
+    h += 'style="width:620px;max-width:620px;';
+    h += 'border-collapse:collapse;border-spacing:0;';
+    h += 'font-family:' + EMAIL_FONT + ' !important;';
+    h += 'mso-fareast-font-family:Arial;';
+    h += 'color:' + SETU_TEXT + ';">';
+
+    h += '<tbody>';
+
+    // Staff name
+    if (displayName) {
+      h += '<tr><td style="padding:0 0 2px 0;';
+      h += emailTextStyle('10.5','13.5','700',SETU_TEXT);
+      h += '">';
+
+      h += '<span style="';
+      h += emailTextStyle('10.5','13.5','700',SETU_TEXT);
+      h += '">';
+
+      h += esc(displayName);
+      h += '</span></td></tr>';
+    }
+
+    // Qualifications
+    if (qualifications) {
+      h += '<tr><td style="padding:0 0 10px 0;';
+      h += emailTextStyle('9.75','12.75','400',SETU_TEXT);
+      h += '">';
+
+      h += '<span style="';
+      h += emailTextStyle('9.75','12.75','400',SETU_TEXT);
+      h += '">';
+
+      h += esc(qualifications);
+      h += '</span></td></tr>';
+
+    } else if (displayName) {
+      h += '<tr><td height="8" ';
+      h += 'style="height:8px;font-size:8px;';
+      h += 'line-height:8px;';
+      h += 'mso-line-height-rule:exactly;">';
+      h += '&nbsp;</td></tr>';
+    }
+
+    // Job title, including Arena when selected
+    if (title) {
+      h += '<tr><td style="padding:0 0 3px 0;';
+      h += emailTextStyle('9.75','12.75','700',SETU_TEXT);
+      h += '">';
+
+      h += '<span style="';
+      h += emailTextStyle('9.75','12.75','700',SETU_TEXT);
+      h += '">';
+
+      h += esc(title);
+      h += '</span></td></tr>';
+    }
+
+    // Email and website
+    if (email || SETU_WEBSITE_LABEL) {
+      h += '<tr><td style="padding:0 0 ';
+      h += ((landline || mobile) ? '3' : '13');
+      h += 'px 0;';
+      h += emailTextStyle('9','12','400',SETU_TEXT);
+      h += '">';
+
+      if (email) {
+        h += '<span style="';
+        h += emailTextStyle('9','12','700',SETU_GOLD);
+        h += '">E</span>&nbsp;&nbsp;';
+
+        h += '<a href="mailto:' + escAttr(email) + '" ';
+        h += 'style="';
+        h += emailTextStyle('9','12','400',SETU_TEXT);
+        h += 'text-decoration:underline;">';
+
+        h += esc(email) + '</a>';
+
+        h += '<span style="';
+        h += emailTextStyle('9','12','400',SETU_TEXT);
+        h += '">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>';
       }
 
-      function value(input) {
-        return input.value.trim();
+      h += '<a href="' + SETU_WEBSITE + '" style="';
+      h += emailTextStyle('9','12','400',SETU_TEXT);
+      h += 'text-decoration:underline;">';
+      h += SETU_WEBSITE_LABEL + '</a>';
+
+      h += '</td></tr>';
+    }
+
+    // Telephone numbers
+    if (landline || mobile) {
+      h += '<tr><td style="padding:0 0 13px 0;';
+      h += emailTextStyle('9','12','400',SETU_TEXT);
+      h += '">';
+
+      if (landline) {
+        h += '<span style="';
+        h += emailTextStyle('9','12','700',SETU_GOLD);
+        h += '">T</span>&nbsp;&nbsp;';
+
+        h += '<a href="tel:' + escAttr(phoneHref(landline));
+        h += '" style="';
+        h += emailTextStyle('9','12','400',SETU_TEXT);
+        h += 'text-decoration:none;">';
+        h += esc(landline) + '</a>';
       }
 
-
-      function titleCaseWords(text, preserveAcronyms) {
-        var acronyms = {
-          'IT': true, 'ICT': true, 'HR': true, 'CEO': true, 'CFO': true,
-          'COO': true, 'CTO': true, 'CIO': true, 'QA': true, 'PR': true,
-          'AI': true, 'EU': true, 'UK': true, 'US': true, 'VP': true
-        };
-
-        return String(text || '').trim().split(/([\s\-’']+)/).map(function (part) {
-          if (!part || /^[\s\-’']+$/.test(part)) return part;
-          var upper = part.toLocaleUpperCase('en-IE');
-          if (preserveAcronyms && acronyms[upper]) return upper;
-          var lower = part.toLocaleLowerCase('en-IE');
-          return lower.charAt(0).toLocaleUpperCase('en-IE') + lower.slice(1);
-        }).join('');
+      if (landline && mobile) {
+        h += '<span style="';
+        h += emailTextStyle('9','12','400',SETU_TEXT);
+        h += '">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>';
       }
 
-      function normalizeName(text) {
-        return titleCaseWords(text, false);
+      if (mobile) {
+        h += '<span style="';
+        h += emailTextStyle('9','12','700',SETU_GOLD);
+        h += '">M</span>&nbsp;&nbsp;';
+
+        h += '<a href="tel:' + escAttr(phoneHref(mobile));
+        h += '" style="';
+        h += emailTextStyle('9','12','400',SETU_TEXT);
+        h += 'text-decoration:none;">';
+        h += esc(mobile) + '</a>';
       }
 
-      function normalizeJobTitle(text) {
-        return titleCaseWords(text, true);
+      h += '</td></tr>';
+    }
+
+    // SETU Novus logo
+    h += '<tr><td style="padding:0 0 12px 0;';
+    h += 'font-family:' + EMAIL_FONT + ' !important;';
+    h += 'mso-fareast-font-family:Arial;">';
+
+    h += '<img src="' + escAttr(logo) + '" ';
+    h += 'alt="SETU Novus" width="245" ';
+    h += 'style="display:block;width:245px;';
+    h += 'max-width:245px;height:auto;border:0;';
+    h += 'outline:none;text-decoration:none;">';
+
+    h += '</td></tr>';
+
+    // Campus address
+    h += '<tr><td style="padding:0 0 12px 0;';
+    h += emailTextStyle('8.25','11.25','400',SETU_TEXT);
+    h += '">';
+
+    h += '<span style="';
+    h += emailTextStyle('8.25','11.25','400',SETU_TEXT);
+    h += '">';
+    h += esc(CAMPUS_EN);
+    h += '</span><br>';
+
+    h += '<span style="';
+    h += emailTextStyle('8.25','11.25','400',SETU_TEXT);
+    h += '">';
+    h += esc(CAMPUS_GA);
+    h += '</span>';
+
+    h += '</td></tr>';
+
+    // Gold signature divider
+    h += '<tr><td height="8" ';
+    h += 'style="height:8px;';
+    h += 'border-bottom:2px solid ' + SETU_GOLD + ';';
+    h += 'font-size:8px;line-height:8px;';
+    h += 'mso-line-height-rule:exactly;">';
+    h += '&nbsp;</td></tr>';
+
+    h += '</tbody></table>';
+
+    return h;
+  }
+
+  function render() {
+    const html = buildSignatureHtml();
+
+    if (!html) {
+      preview.innerHTML =
+        '<p class="preview-placeholder">' +
+        'Enter your details above to generate your ' +
+        'SETU Novus signature.' +
+        '</p>';
+    } else {
+      preview.innerHTML = html;
+    }
+
+    validateEmail(false);
+    copyStatus.textContent = '';
+  }
+
+  // Live preview for text inputs
+  Object.keys(fields).forEach(function(key) {
+    fields[key].addEventListener('input', function() {
+      if (key === 'email') {
+        fields.email.value =
+          normalizeEmail(fields.email.value);
       }
-
-      function normalizeEmail(text) {
-        return String(text || '').trim().toLocaleLowerCase('en-IE');
-      }
-
-      function digitsOnly(text) {
-        return String(text || '').replace(/\D/g, '');
-      }
-
-      function formatIrishNumber(nationalDigits, kind) {
-        var n = digitsOnly(nationalDigits);
-        if (!n) return '';
-
-        if (kind === 'mobile' || /^8\d{8}$/.test(n)) {
-          if (n.length >= 9) return '+353 ' + n.slice(0, 2) + ' ' + n.slice(2, 5) + ' ' + n.slice(5, 9);
-        }
-
-        if (n.charAt(0) === '1' && n.length >= 8) {
-          return '+353 1 ' + n.slice(1, 4) + ' ' + n.slice(4, 8);
-        }
-
-        if (n.length === 8) {
-          return '+353 ' + n.slice(0, 2) + ' ' + n.slice(2, 5) + ' ' + n.slice(5, 8);
-        }
-
-        if (n.length === 9) {
-          return '+353 ' + n.slice(0, 3) + ' ' + n.slice(3, 6) + ' ' + n.slice(6, 9);
-        }
-
-        var groups = [];
-        while (n.length > 4) {
-          groups.unshift(n.slice(-3));
-          n = n.slice(0, -3);
-        }
-        if (n) groups.unshift(n);
-        return '+353 ' + groups.join(' ');
-      }
-
-      function formatInternationalNumber(raw) {
-        var cleaned = String(raw || '').trim();
-        if (!cleaned) return '';
-
-        cleaned = cleaned.replace(/^00/, '+');
-        var digits = digitsOnly(cleaned);
-        if (!digits) return '';
-
-        if (cleaned.charAt(0) !== '+') return cleaned;
-
-        // +353 is handled separately. For another explicit international prefix,
-        // preserve the country prefix and apply conservative grouping to the rest.
-        var countryLen = 2;
-        if (/^\+1\d/.test(cleaned)) countryLen = 1;
-        else if (/^\+(351|352|354|355|356|357|358|359)\d/.test(cleaned)) countryLen = 3;
-
-        var cc = digits.slice(0, countryLen);
-        var rest = digits.slice(countryLen);
-        if (!rest) return '+' + cc;
-
-        var groups = [];
-        while (rest.length > 4) {
-          groups.push(rest.slice(0, 3));
-          rest = rest.slice(3);
-        }
-        if (rest) groups.push(rest);
-        return '+' + cc + ' ' + groups.join(' ');
-      }
-
-      function normalizePhone(text, kind) {
-        var raw = String(text || '').trim();
-        if (!raw) return '';
-
-        var compact = raw.replace(/[()\-./]/g, ' ').replace(/\s+/g, ' ').trim();
-        if (/^00/.test(compact)) compact = '+' + compact.slice(2);
-
-        var digits = digitsOnly(compact);
-        if (!digits) return '';
-
-        if (compact.charAt(0) === '+') {
-          if (/^\+353/.test(compact)) {
-            return formatIrishNumber(digits.slice(3), kind);
-          }
-          return formatInternationalNumber(compact);
-        }
-
-        if (/^353/.test(digits)) {
-          return formatIrishNumber(digits.slice(3), kind);
-        }
-
-        if (digits.charAt(0) === '0') {
-          return formatIrishNumber(digits.slice(1), kind);
-        }
-
-        // If no prefix or Irish trunk zero was supplied, leave the number's
-        // country assumption untouched and just group the digits for readability.
-        var groups = [];
-        var rest = digits;
-        while (rest.length > 4) {
-          groups.push(rest.slice(0, 3));
-          rest = rest.slice(3);
-        }
-        if (rest) groups.push(rest);
-        return groups.join(' ');
-      }
-
-      function phoneHref(phone) {
-        return phone.replace(/[^\d+]/g, '');
-      }
-
-      function logoUrl() {
-        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-          try {
-            return new URL(LOGO_FILENAME, window.location.href).href;
-          } catch (e) {
-            return GITHUB_PAGES_BASE + encodeURIComponent(LOGO_FILENAME).replace(/%2F/g, '/');
-          }
-        }
-        return GITHUB_PAGES_BASE + encodeURIComponent(LOGO_FILENAME).replace(/%2F/g, '/');
-      }
-
-      function isValidSetuEmail(email) {
-        if (!email) return true;
-        return /^[^\s@]+@setu\.ie$/i.test(email);
-      }
-
-      function validateEmail(showMessage) {
-        var email = normalizeEmail(value(fields.email));
-        var valid = isValidSetuEmail(email);
-
-        fields.email.classList.toggle('invalid', !valid);
-        emailValidation.textContent = (!valid && showMessage)
-          ? 'Please enter your @setu.ie email address.'
-          : '';
-
-        return valid;
-      }
-
-      // Email-safe inline typography. Outlook for Windows uses the Microsoft Word
-      // rendering engine, so every text element gets its own explicit font settings.
-      var EMAIL_FONT = 'Arial, Helvetica, sans-serif';
-
-      function emailTextStyle(sizePt, linePt, weight, color) {
-        return 'font-family:' + EMAIL_FONT + ' !important;' +
-          'mso-fareast-font-family:Arial;' +
-          'font-size:' + sizePt + 'pt;' +
-          'line-height:' + linePt + 'pt;' +
-          'mso-line-height-rule:exactly;' +
-          'font-weight:' + weight + ';' +
-          'color:' + color + ';';
-      }
-
-      function buildSignatureHtml() {
-        var englishName = normalizeName(value(fields.englishName));
-        var irishName = normalizeName(value(fields.irishName));
-        var qualifications = value(fields.qualifications);
-        var title = normalizeJobTitle(value(fields.title));
-        var email = normalizeEmail(value(fields.email));
-        var landline = normalizePhone(value(fields.landline), 'landline');
-        var mobile = normalizePhone(value(fields.mobile), 'mobile');
-
-        if (!englishName && !irishName && !qualifications && !title && !email && !landline && !mobile) {
-          return '';
-        }
-
-        var displayName = englishName;
-        if (englishName && irishName) {
-          displayName = englishName + ' / ' + irishName;
-        } else if (!englishName && irishName) {
-          displayName = irishName;
-        }
-
-        var logo = logoUrl();
-        var h = '';
-
-        // Keep the email signature entirely self-contained. Do not rely on the
-        // generator page's CSS because Outlook does not copy those styles.
-        h += '<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="620" ';
-        h += 'style="width:620px; max-width:620px; border-collapse:collapse; border-spacing:0; font-family:' + EMAIL_FONT + ' !important; mso-fareast-font-family:Arial; color:' + SETU_TEXT + ';">';
-        h += '<tbody>';
-
-        if (displayName) {
-          h += '<tr><td style="padding:0 0 2px 0;' + emailTextStyle('10.5', '13.5', '700', SETU_TEXT) + '">';
-          h += '<span style="' + emailTextStyle('10.5', '13.5', '700', SETU_TEXT) + '">' + esc(displayName) + '</span>';
-          h += '</td></tr>';
-        }
-
-        if (qualifications) {
-          h += '<tr><td style="padding:0 0 10px 0;' + emailTextStyle('9.75', '12.75', '400', SETU_TEXT) + '">';
-          h += '<span style="' + emailTextStyle('9.75', '12.75', '400', SETU_TEXT) + '">' + esc(qualifications) + '</span>';
-          h += '</td></tr>';
-        } else if (displayName) {
-          h += '<tr><td height="8" style="height:8px; font-size:8px; line-height:8px; mso-line-height-rule:exactly;">&nbsp;</td></tr>';
-        }
-
-        if (title) {
-          h += '<tr><td style="padding:0 0 3px 0;' + emailTextStyle('9.75', '12.75', '700', SETU_TEXT) + '">';
-          h += '<span style="' + emailTextStyle('9.75', '12.75', '700', SETU_TEXT) + '">SETU Novus - ' + esc(title) + '</span>';
-          h += '</td></tr>';
-        }
-
-        if (email || SETU_WEBSITE_LABEL) {
-          h += '<tr><td style="padding:0 0 ' + ((landline || mobile) ? '3' : '13') + 'px 0;' + emailTextStyle('9', '12', '400', SETU_TEXT) + '">';
-
-          if (email) {
-            h += '<span style="' + emailTextStyle('9', '12', '700', SETU_GOLD) + '">E</span>';
-            h += '&nbsp;&nbsp;';
-            h += '<a href="mailto:' + escAttr(email) + '" style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + 'text-decoration:underline;">' + esc(email) + '</a>';
-            h += '<span style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + '">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>';
-          }
-
-          h += '<a href="' + SETU_WEBSITE + '" style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + 'text-decoration:underline;">' + SETU_WEBSITE_LABEL + '</a>';
-          h += '</td></tr>';
-        }
-
-        if (landline || mobile) {
-          h += '<tr><td style="padding:0 0 13px 0;' + emailTextStyle('9', '12', '400', SETU_TEXT) + '">';
-          if (landline) {
-            h += '<span style="' + emailTextStyle('9', '12', '700', SETU_GOLD) + '">T</span>&nbsp;&nbsp;';
-            h += '<a href="tel:' + escAttr(phoneHref(landline)) + '" style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + 'text-decoration:none;">' + esc(landline) + '</a>';
-          }
-          if (landline && mobile) {
-            h += '<span style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + '">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>';
-          }
-          if (mobile) {
-            h += '<span style="' + emailTextStyle('9', '12', '700', SETU_GOLD) + '">M</span>&nbsp;&nbsp;';
-            h += '<a href="tel:' + escAttr(phoneHref(mobile)) + '" style="' + emailTextStyle('9', '12', '400', SETU_TEXT) + 'text-decoration:none;">' + esc(mobile) + '</a>';
-          }
-          h += '</td></tr>';
-        }
-
-        h += '<tr><td style="padding:0 0 12px 0; font-family:' + EMAIL_FONT + ' !important; mso-fareast-font-family:Arial;">';
-        h += '<img src="' + escAttr(logo) + '" alt="SETU Novus" width="245" ';
-        h += 'style="display:block; width:245px; max-width:245px; height:auto; border:0; outline:none; text-decoration:none;">';
-        h += '</td></tr>';
-
-        h += '<tr><td style="padding:0 0 12px 0;' + emailTextStyle('8.25', '11.25', '400', SETU_TEXT) + '">';
-        h += '<span style="' + emailTextStyle('8.25', '11.25', '400', SETU_TEXT) + '">' + esc(CAMPUS_EN) + '</span><br>';
-        h += '<span style="' + emailTextStyle('8.25', '11.25', '400', SETU_TEXT) + '">' + esc(CAMPUS_GA) + '</span>';
-        h += '</td></tr>';
-
-        h += '<tr><td height="8" style="height:8px; border-bottom:2px solid ' + SETU_GOLD + '; font-size:8px; line-height:8px; mso-line-height-rule:exactly;">&nbsp;</td></tr>';
-
-        h += '</tbody></table>';
-        return h;
-      }
-
-      function render() {
-        var html = buildSignatureHtml();
-
-        if (!html) {
-          preview.innerHTML = '<p class="preview-placeholder">Enter your details above to generate your SETU Novus signature.</p>';
-        } else {
-          preview.innerHTML = html;
-        }
-
-        validateEmail(false);
-        copyStatus.textContent = '';
-      }
-
-      Object.keys(fields).forEach(function (key) {
-        fields[key].addEventListener('input', function () {
-          if (key === 'email') {
-            fields.email.value = normalizeEmail(fields.email.value);
-          }
-          render();
-        });
-      });
-
-      fields.englishName.addEventListener('blur', function () {
-        fields.englishName.value = normalizeName(fields.englishName.value);
-        render();
-      });
-
-      fields.irishName.addEventListener('blur', function () {
-        fields.irishName.value = normalizeName(fields.irishName.value);
-        render();
-      });
-
-      fields.title.addEventListener('blur', function () {
-        fields.title.value = normalizeJobTitle(fields.title.value);
-        render();
-      });
-
-      fields.landline.addEventListener('blur', function () {
-        fields.landline.value = normalizePhone(fields.landline.value, 'landline');
-        render();
-      });
-
-      fields.mobile.addEventListener('blur', function () {
-        fields.mobile.value = normalizePhone(fields.mobile.value, 'mobile');
-        render();
-      });
-
-      fields.email.addEventListener('blur', function () {
-        fields.email.value = normalizeEmail(fields.email.value);
-        validateEmail(true);
-        render();
-      });
-
-      function flashCopied() {
-        var original = 'Copy signature';
-        copyButton.textContent = 'Copied!';
-        copyButton.classList.add('copied');
-        copyStatus.textContent = 'Signature copied. Paste it into Outlook using the instructions below.';
-
-        window.setTimeout(function () {
-          copyButton.textContent = original;
-          copyButton.classList.remove('copied');
-        }, 1800);
-      }
-
-      async function copySignature() {
-        fields.englishName.value = normalizeName(fields.englishName.value);
-        fields.irishName.value = normalizeName(fields.irishName.value);
-        fields.title.value = normalizeJobTitle(fields.title.value);
-        fields.email.value = normalizeEmail(fields.email.value);
-        fields.landline.value = normalizePhone(fields.landline.value, 'landline');
-        fields.mobile.value = normalizePhone(fields.mobile.value, 'mobile');
-
-        render();
-        var html = buildSignatureHtml();
-
-        if (!html) {
-          copyStatus.textContent = 'Enter your details first.';
-          fields.englishName.focus();
-          return;
-        }
-
-        if (!value(fields.englishName)) {
-          copyStatus.textContent = 'Please enter your English name before copying.';
-          fields.englishName.focus();
-          return;
-        }
-
-        if (!value(fields.title)) {
-          copyStatus.textContent = 'Please enter your job title before copying.';
-          fields.title.focus();
-          return;
-        }
-
-        if (!value(fields.email)) {
-          copyStatus.textContent = 'Please enter your SETU email address before copying.';
-          fields.email.focus();
-          return;
-        }
-
-        if (!validateEmail(true)) {
-          copyStatus.textContent = 'Please correct the email address before copying.';
-          fields.email.focus();
-          return;
-        }
-
-        var temp = document.createElement('div');
-        temp.innerHTML = html;
-        var plainText = temp.innerText;
-
-        try {
-          if (navigator.clipboard && window.ClipboardItem) {
-            await navigator.clipboard.write([
-              new ClipboardItem({
-                'text/html': new Blob([
-                  '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="Generator" content="SETU Novus Email Signature Generator"></head><body style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">' + html + '</body></html>'
-                ], { type: 'text/html' }),
-                'text/plain': new Blob([plainText], { type: 'text/plain' })
-              })
-            ]);
-            flashCopied();
-            return;
-          }
-        } catch (e) {
-          // Use the legacy copy fallback below.
-        }
-
-        temp.style.position = 'fixed';
-        temp.style.left = '-10000px';
-        temp.style.top = '0';
-        document.body.appendChild(temp);
-
-        var range = document.createRange();
-        range.selectNodeContents(temp);
-        var selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-
-        try {
-          var success = document.execCommand('copy');
-          if (!success) throw new Error('Copy command failed');
-          flashCopied();
-        } catch (e) {
-          copyStatus.textContent = 'Automatic copy failed. Select the signature preview manually and copy it.';
-        }
-
-        selection.removeAllRanges();
-        document.body.removeChild(temp);
-      }
-
-      copyButton.addEventListener('click', copySignature);
-
-      document.getElementById('reset-btn').addEventListener('click', function () {
-        Object.keys(fields).forEach(function (key) {
-          fields[key].value = '';
-        });
-        fields.email.classList.remove('invalid');
-        emailValidation.textContent = '';
-        copyStatus.textContent = '';
-        render();
-        fields.englishName.focus();
-      });
-
-      document.querySelectorAll('.tab').forEach(function (tab) {
-        tab.addEventListener('click', function () {
-          var selected = tab.getAttribute('data-tab');
-
-          document.querySelectorAll('.tab').forEach(function (button) {
-            button.classList.toggle('active', button === tab);
-          });
-
-          document.querySelectorAll('.tab-content').forEach(function (content) {
-            content.classList.toggle('active', content.getAttribute('data-tab') === selected);
-          });
-        });
-      });
 
       render();
-    })();
-  </script>
+    });
+  });
+
+  // Live preview for Arena Staff checkbox
+  arenaCheckbox.addEventListener('change', render);
+
+  // Normalise entries when leaving fields
+  fields.englishName.addEventListener('blur', function() {
+    fields.englishName.value =
+      normalizeName(fields.englishName.value);
+    render();
+  });
+
+  fields.irishName.addEventListener('blur', function() {
+    fields.irishName.value =
+      normalizeName(fields.irishName.value);
+    render();
+  });
+
+  fields.title.addEventListener('blur', function() {
+    fields.title.value =
+      normalizeJobTitle(fields.title.value);
+    render();
+  });
+
+  fields.landline.addEventListener('blur', function() {
+    fields.landline.value =
+      normalizePhone(fields.landline.value, 'landline');
+    render();
+  });
+
+  fields.mobile.addEventListener('blur', function() {
+    fields.mobile.value =
+      normalizePhone(fields.mobile.value, 'mobile');
+    render();
+  });
+
+  fields.email.addEventListener('blur', function() {
+    fields.email.value =
+      normalizeEmail(fields.email.value);
+    render();
+    validateEmail(true);
+  });
+
+  function flashCopied() {
+    copyButton.textContent = 'Copied!';
+    copyButton.classList.add('copied');
+
+    copyStatus.textContent =
+      'Signature copied. Paste it into Outlook ' +
+      'using the instructions below.';
+
+    window.setTimeout(function() {
+      copyButton.textContent = 'Copy signature';
+      copyButton.classList.remove('copied');
+    }, 1800);
+  }
+
+  async function copySignature() {
+    fields.englishName.value =
+      normalizeName(fields.englishName.value);
+
+    fields.irishName.value =
+      normalizeName(fields.irishName.value);
+
+    fields.title.value =
+      normalizeJobTitle(fields.title.value);
+
+    fields.email.value =
+      normalizeEmail(fields.email.value);
+
+    fields.landline.value =
+      normalizePhone(fields.landline.value, 'landline');
+
+    fields.mobile.value =
+      normalizePhone(fields.mobile.value, 'mobile');
+
+    render();
+
+    if (!value(fields.englishName)) {
+      copyStatus.textContent =
+        'Please enter your English name before copying.';
+      fields.englishName.focus();
+      return;
+    }
+
+    if (!value(fields.title)) {
+      copyStatus.textContent =
+        'Please enter your job title before copying.';
+      fields.title.focus();
+      return;
+    }
+
+    if (!value(fields.email)) {
+      copyStatus.textContent =
+        'Please enter your SETU email address before copying.';
+      fields.email.focus();
+      return;
+    }
+
+    if (!validateEmail(true)) {
+      copyStatus.textContent =
+        'Please correct the email address before copying.';
+      fields.email.focus();
+      return;
+    }
+
+    const html = buildSignatureHtml();
+
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': new Blob([
+              '<!DOCTYPE html><html><head>' +
+              '<meta charset="utf-8">' +
+              '</head><body style="margin:0;padding:0;">' +
+              html +
+              '</body></html>'
+            ], {
+              type: 'text/html'
+            }),
+
+            'text/plain': new Blob([
+              temp.innerText
+            ], {
+              type: 'text/plain'
+            })
+          })
+        ]);
+
+        flashCopied();
+        return;
+      }
+    } catch (e) {
+      // Fall back to traditional copy below.
+    }
+
+    temp.style.position = 'fixed';
+    temp.style.left = '-10000px';
+    temp.style.top = '0';
+
+    document.body.appendChild(temp);
+
+    const range = document.createRange();
+    range.selectNodeContents(temp);
+
+    const selection = window.getSelection();
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    try {
+      const success = document.execCommand('copy');
+
+      if (!success) {
+        throw new Error('Copy failed');
+      }
+
+      flashCopied();
+    } catch (e) {
+      copyStatus.textContent =
+        'Automatic copy failed. Select the signature ' +
+        'preview manually and copy it.';
+    }
+
+    selection.removeAllRanges();
+    document.body.removeChild(temp);
+  }
+
+  copyButton.addEventListener('click', copySignature);
+
+  // Clear all fields including Arena checkbox
+  document.getElementById('reset-btn')
+    .addEventListener('click', function() {
+
+      Object.keys(fields).forEach(function(key) {
+        fields[key].value = '';
+      });
+
+      arenaCheckbox.checked = false;
+
+      fields.email.classList.remove('invalid');
+      emailValidation.textContent = '';
+      copyStatus.textContent = '';
+
+      render();
+      fields.englishName.focus();
+    });
+
+  // Outlook instruction tabs
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+
+      const selected = tab.getAttribute('data-tab');
+
+      document.querySelectorAll('.tab').forEach(
+        function(button) {
+          button.classList.toggle(
+            'active',
+            button === tab
+          );
+        }
+      );
+
+      document.querySelectorAll('.tab-content').forEach(
+        function(content) {
+          content.classList.toggle(
+            'active',
+            content.getAttribute('data-tab') === selected
+          );
+        }
+      );
+
+    });
+  });
+
+  // Initial preview
+  render();
+
+})();
+</script>
+
 </body>
 </html>
