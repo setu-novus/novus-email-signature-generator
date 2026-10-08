@@ -851,15 +851,33 @@ Keep the repository LICENSE and original copyright notice.
       'color:' + color + ';';
   }
 
-  // Legacy font colour plus inline CSS improves colour retention when
-  // pasting rich HTML into Classic Outlook, New Outlook and Outlook on the web.
-  // No HTML email technique can override a user's paste-as-plain-text setting.
-  function goldContactLabel(letter) {
-    return '<font color="' + SETU_GOLD + '" style="color:' +
-      SETU_GOLD + ' !important;">' +
-      '<span style="' + emailTextStyle('10.25','13.5','700',SETU_GOLD) +
-      'color:' + SETU_GOLD + ' !important;">' + letter +
-      '</span></font>';
+  // Gold text backed by a narrow gold table-cell marker.
+  // Outlook may override text colours on paste, but keeps bgcolor
+  // table-cell fills more consistently (as with the signature divider).
+  function contactLabelCells(letter) {
+    return '<td width="3" bgcolor="' + SETU_GOLD + '" ' +
+      'style="width:3px;background-color:' + SETU_GOLD +
+      ';font-size:1px;line-height:1px;">&nbsp;</td>' +
+      '<td width="17" valign="middle" ' +
+      'style="width:17px;padding:0 3px 0 5px;' +
+      emailTextStyle('10.25','13.5','700',SETU_GOLD) + '">' +
+      '<font color="' + SETU_GOLD + '" style="color:' +
+      SETU_GOLD + ' !important;font-weight:bold;">' + letter +
+      '</font></td>';
+  }
+
+  function contactValueCell(content, padRight) {
+    return '<td valign="middle" style="padding:0 ' +
+      (padRight || 0) + 'px 0 0;' +
+      emailTextStyle('10.25','13.5','400',SETU_TEXT) + '">' +
+      content + '</td>';
+  }
+
+  function contactLink(href, text, underline) {
+    return '<a href="' + escAttr(href) + '" style="' +
+      emailTextStyle('10.25','13.5','400',SETU_TEXT) +
+      'text-decoration:' + (underline ? 'underline' : 'none') +
+      ';">' + esc(text) + '</a>';
   }
 
   function buildSignatureHtml() {
@@ -962,70 +980,38 @@ Keep the repository LICENSE and original copyright notice.
       h += '</span></td></tr>';
     }
 
-    // Email and website
+    // Contact details are laid out as simple nested presentation tables.
+    // Each label has both gold text and a 3px gold table-cell marker,
+    // so there is still a visible gold cue if Outlook recolours text.
     if (email || SETU_WEBSITE_LABEL) {
-      h += '<tr><td style="padding:0 0 ';
-      h += ((landline || mobile) ? '3' : '13');
-      h += 'px 0;';
-      h += emailTextStyle('10.25','13.5','400',SETU_TEXT);
-      h += '">';
-
+      h += '<tr><td style="padding:0 0 4px 0;">';
+      h += '<table role="presentation" cellpadding="0" cellspacing="0" border="0" ' +
+        'style="border-collapse:collapse;"><tr>';
       if (email) {
-        h += goldContactLabel('E') + '&nbsp;&nbsp;';
-
-        h += '<a href="mailto:' + escAttr(email) + '" ';
-        h += 'style="';
-        h += emailTextStyle('10.25','13.5','400',SETU_TEXT);
-        h += 'text-decoration:underline;">';
-
-        h += esc(email) + '</a>';
-
-        h += '<span style="';
-        h += emailTextStyle('10.25','13.5','400',SETU_TEXT);
-        h += '">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>';
+        h += contactLabelCells('E');
+        h += contactValueCell(contactLink('mailto:' + email, email, true), 13);
+        h += contactValueCell('<span style="color:' + SETU_TEXT + ';">|</span>', 13);
       }
-
-      h += '<a href="' + SETU_WEBSITE + '" style="';
-      h += emailTextStyle('10.25','13.5','400',SETU_TEXT);
-      h += 'text-decoration:underline;">';
-      h += SETU_WEBSITE_LABEL + '</a>';
-
-      h += '</td></tr>';
+      h += contactValueCell(contactLink(SETU_WEBSITE, SETU_WEBSITE_LABEL, true), 0);
+      h += '</tr></table></td></tr>';
     }
 
-    // Telephone numbers
     if (landline || mobile) {
-      h += '<tr><td style="padding:0 0 13px 0;';
-      h += emailTextStyle('10.25','13.5','400',SETU_TEXT);
-      h += '">';
-
+      h += '<tr><td style="padding:0 0 13px 0;">';
+      h += '<table role="presentation" cellpadding="0" cellspacing="0" border="0" ' +
+        'style="border-collapse:collapse;"><tr>';
       if (landline) {
-        h += goldContactLabel('T') + '&nbsp;&nbsp;';
-
-        h += '<a href="tel:' + escAttr(phoneHref(landline));
-        h += '" style="';
-        h += emailTextStyle('10.25','13.5','400',SETU_TEXT);
-        h += 'text-decoration:none;">';
-        h += esc(landline) + '</a>';
+        h += contactLabelCells('T');
+        h += contactValueCell(contactLink('tel:' + phoneHref(landline), landline, false), 13);
       }
-
       if (landline && mobile) {
-        h += '<span style="';
-        h += emailTextStyle('10.25','13.5','400',SETU_TEXT);
-        h += '">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>';
+        h += contactValueCell('<span style="color:' + SETU_TEXT + ';">|</span>', 13);
       }
-
       if (mobile) {
-        h += goldContactLabel('M') + '&nbsp;&nbsp;';
-
-        h += '<a href="tel:' + escAttr(phoneHref(mobile));
-        h += '" style="';
-        h += emailTextStyle('10.25','13.5','400',SETU_TEXT);
-        h += 'text-decoration:none;">';
-        h += esc(mobile) + '</a>';
+        h += contactLabelCells('M');
+        h += contactValueCell(contactLink('tel:' + phoneHref(mobile), mobile, false), 0);
       }
-
-      h += '</td></tr>';
+      h += '</tr></table></td></tr>';
     }
 
     // SETU Novus logo
@@ -1218,11 +1204,7 @@ Keep the repository LICENSE and original copyright notice.
         await navigator.clipboard.write([
           new ClipboardItem({
             'text/html': new Blob([
-              '<!DOCTYPE html><html><head>' +
-              '<meta charset="utf-8">' +
-              '</head><body style="margin:0;padding:0;">' +
-              html +
-              '</body></html>'
+              '<!--StartFragment-->' + html + '<!--EndFragment-->'
             ], {
               type: 'text/html'
             }),
