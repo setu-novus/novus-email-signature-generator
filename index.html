@@ -66,7 +66,7 @@ body {
 .field input.invalid { border-color: var(--danger) !important; }
 .field-hint, .validation-message { margin-top: 7px; color: var(--muted); font-size: 13px; line-height: 1.55; }
 .validation-message { color: var(--danger); min-height: 17px; }
-/* Arena option: native checkbox remains accessible but is visually hidden. */
+/* Arena / Accommodation options: native checkbox remains accessible but is visually hidden. */
 .arena-option { padding: 18px 20px; border: 1px solid #dce5eb; border-radius: 13px; background: linear-gradient(135deg,#f8fafc,#f3f7fa); transition: border-color .2s, background .2s, box-shadow .2s; }
 .arena-option:hover { border-color: #aabac8; }
 .field .arena-label { display: flex; position: relative; align-items: center; justify-content: space-between; gap: 16px; margin: 0; color: var(--setu-blue); font-size: 15px; font-weight: 750; cursor: pointer; }
@@ -210,7 +210,28 @@ body {
       </label>
       <p class="arena-hint">
         Switch on if you are an Arena staff member.
-        Your job title will automatically include "Arena".
+        Your job title will automatically include "Arena"
+        and the Arena address will be used.
+      </p>
+    </div>
+  </div>
+
+  <!-- Accommodation staff checkbox -->
+
+  <div class="field field-full">
+    <div class="arena-option">
+      <label class="arena-label" for="sig-accommodation">
+        <input
+          id="sig-accommodation"
+          type="checkbox"
+        >
+        <span class="arena-switch" aria-hidden="true"></span>
+        <span class="arena-text">Accommodation Staff</span>
+      </label>
+      <p class="arena-hint">
+        Switch on if you are an Accommodation staff member.
+        Your job title will automatically include "Accommodation"
+        and the Accommodation address will be used.
       </p>
     </div>
   </div>
@@ -225,7 +246,8 @@ body {
     >
     <div class="field-hint">
       Enter your job title only. The SETU Novus prefix,
-      and Arena if selected, will be added automatically.
+      and Arena or Accommodation if selected, will be added
+      automatically.
     </div>
   </div>
 
@@ -560,6 +582,18 @@ Keep the repository LICENSE and original copyright notice.
   const CAMPUS_GA =
     'Campas Bhóthar Chorcaí, Bóthar Chorcaí, Port Láirge, X91 K0EK, Éire';
 
+  // Addresses used when a staff-type toggle is switched on.
+  // Each entry is an array of lines shown under the logo.
+  const ADDRESS_ARENA = [
+    'SETU Arena, West Campus, Carriganore, Co. Waterford, X91 XD96',
+    'Aréna SETU, An Campas Thiar, Cloch an Óir, Co. Phort Láirge, X91 XD96'
+  ];
+
+  const ADDRESS_ACCOMMODATION = [
+    'SETU Novus Accommodation, Cork Road, Waterford, Ireland, X91 X365',
+    'Lóistín Novus SETU, Bóthar Chorcaí, Port Láirge, Éire, X91 X365'
+  ];
+
   const fields = {
     englishName: document.getElementById('sig-name-en'),
     irishName: document.getElementById('sig-name-ga'),
@@ -571,6 +605,8 @@ Keep the repository LICENSE and original copyright notice.
   };
 
   const arenaCheckbox = document.getElementById('sig-arena');
+  const accommodationCheckbox =
+    document.getElementById('sig-accommodation');
   const preview = document.getElementById('sig-preview');
   const emailValidation =
     document.getElementById('email-validation');
@@ -651,7 +687,8 @@ Keep the repository LICENSE and original copyright notice.
       .toLocaleLowerCase('en-IE');
   }
 
-  // Generates the full title including the Arena prefix.
+  // Generates the full title including the Arena or
+  // Accommodation prefix.
   function getFullJobTitle() {
     let title = normalizeJobTitle(value(fields.title));
 
@@ -665,7 +702,19 @@ Keep the repository LICENSE and original copyright notice.
       return 'SETU Novus - Arena ' + title;
     }
 
+    if (accommodationCheckbox.checked) {
+      title = title.replace(/^Accommodation\s+/i, '');
+      return 'SETU Novus - Accommodation ' + title;
+    }
+
     return 'SETU Novus - ' + title;
+  }
+
+  // Returns the address lines shown under the logo.
+  function getAddressLines() {
+    if (arenaCheckbox.checked) return ADDRESS_ARENA;
+    if (accommodationCheckbox.checked) return ADDRESS_ACCOMMODATION;
+    return [CAMPUS_EN, CAMPUS_GA];
   }
 
   function digitsOnly(text) {
@@ -966,7 +1015,7 @@ Keep the repository LICENSE and original copyright notice.
       h += '&nbsp;</td></tr>';
     }
 
-    // Job title, including Arena when selected
+    // Job title, including Arena / Accommodation when selected
     if (title) {
       h += '<tr><td style="padding:0 0 3px 0;';
       h += emailTextStyle('11','14.25','700',SETU_TEXT);
@@ -1027,26 +1076,20 @@ Keep the repository LICENSE and original copyright notice.
 
     h += '</td></tr>';
 
-    // Campus address
+    // Address (default campus, Arena or Accommodation)
     h += '<tr><td style="padding:0 0 12px 0;';
     h += emailTextStyle('9.5','12.75','400',SETU_TEXT);
     h += '">';
 
-    h += '<span style="';
-    h += emailTextStyle('9.5','12.75','400',SETU_TEXT);
-    h += '">';
-    h += esc(CAMPUS_EN);
-    h += '</span><br>';
-
-    h += '<span style="';
-    h += emailTextStyle('9.5','12.75','400',SETU_TEXT);
-    h += '">';
-    h += esc(CAMPUS_GA);
-    h += '</span>';
+    h += getAddressLines().map(function(line) {
+      return '<span style="' +
+        emailTextStyle('9.5','12.75','400',SETU_TEXT) +
+        '">' + esc(line) + '</span>';
+    }).join('<br>');
 
     h += '</td></tr>';
 
-    // Short SETU gold divider beneath the bilingual address.
+    // Short SETU gold divider beneath the address.
     // A fixed-width table keeps the rule short in Outlook.
     h += '<tr><td style="padding:5px 0 0 0;">';
     h += '<table role="presentation" cellpadding="0" cellspacing="0" border="0" ';
@@ -1090,8 +1133,21 @@ Keep the repository LICENSE and original copyright notice.
     });
   });
 
-  // Live preview for Arena Staff checkbox
-  arenaCheckbox.addEventListener('change', render);
+  // Live preview for Arena / Accommodation toggles.
+  // Only one can be on at a time.
+  arenaCheckbox.addEventListener('change', function() {
+    if (arenaCheckbox.checked) {
+      accommodationCheckbox.checked = false;
+    }
+    render();
+  });
+
+  accommodationCheckbox.addEventListener('change', function() {
+    if (accommodationCheckbox.checked) {
+      arenaCheckbox.checked = false;
+    }
+    render();
+  });
 
   // Normalise entries when leaving fields
   fields.englishName.addEventListener('blur', function() {
@@ -1258,7 +1314,7 @@ Keep the repository LICENSE and original copyright notice.
 
   copyButton.addEventListener('click', copySignature);
 
-  // Clear all fields including Arena checkbox
+  // Clear all fields including both toggles
   document.getElementById('reset-btn')
     .addEventListener('click', function() {
 
@@ -1267,6 +1323,7 @@ Keep the repository LICENSE and original copyright notice.
       });
 
       arenaCheckbox.checked = false;
+      accommodationCheckbox.checked = false;
 
       fields.email.classList.remove('invalid');
       emailValidation.textContent = '';
