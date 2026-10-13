@@ -571,8 +571,22 @@ Keep the repository LICENSE and original copyright notice.
     'https://setu-novus.github.io/novus-email-signature-generator/';
 
   const LOGO_FILENAME = 'setu-novus-logo.png';
-  const SETU_WEBSITE = 'https://www.setu.ie';
-  const SETU_WEBSITE_LABEL = 'setu.ie';
+  // Website link shown after the email address.
+  // Each toggle has its own link; the label is the visible text.
+  const WEBSITE_DEFAULT = {
+    href: 'https://www.setu.ie/about/governance-and-management/subsidiaries',
+    label: 'SETU Novus'
+  };
+
+  const WEBSITE_ARENA = {
+    href: 'https://setuarena.ie',
+    label: 'SETU Arena'
+  };
+
+  const WEBSITE_ACCOMMODATION = {
+    href: 'https://www.setu.ie/current-students/student-support-services/accommodation/accommodation-waterford',
+    label: 'SETU Accommodation'
+  };
   const SETU_GOLD = '#F0C300';
   const SETU_TEXT = '#445363';
 
@@ -715,6 +729,13 @@ Keep the repository LICENSE and original copyright notice.
     if (arenaCheckbox.checked) return ADDRESS_ARENA;
     if (accommodationCheckbox.checked) return ADDRESS_ACCOMMODATION;
     return [CAMPUS_EN, CAMPUS_GA];
+  }
+
+  // Returns the website link for the selected toggle.
+  function getWebsite() {
+    if (arenaCheckbox.checked) return WEBSITE_ARENA;
+    if (accommodationCheckbox.checked) return WEBSITE_ACCOMMODATION;
+    return WEBSITE_DEFAULT;
   }
 
   function digitsOnly(text) {
@@ -1032,7 +1053,9 @@ Keep the repository LICENSE and original copyright notice.
     // Contact details are laid out as simple nested presentation tables.
     // Each label has both gold text and a 3px gold table-cell marker,
     // so there is still a visible gold cue if Outlook recolours text.
-    if (email || SETU_WEBSITE_LABEL) {
+    const website = getWebsite();
+
+    if (email || website.label) {
       h += '<tr><td style="padding:0 0 4px 0;">';
       h += '<table role="presentation" cellpadding="0" cellspacing="0" border="0" ' +
         'style="border-collapse:collapse;"><tr>';
@@ -1041,7 +1064,7 @@ Keep the repository LICENSE and original copyright notice.
         h += contactValueCell(contactLink('mailto:' + email, email, true), 13);
         h += contactValueCell('<span style="color:' + SETU_TEXT + ';">|</span>', 13);
       }
-      h += contactValueCell(contactLink(SETU_WEBSITE, SETU_WEBSITE_LABEL, true), 0);
+      h += contactValueCell(contactLink(website.href, website.label, true), 0);
       h += '</tr></table></td></tr>';
     }
 
